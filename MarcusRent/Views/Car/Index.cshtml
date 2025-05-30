@@ -1,0 +1,85 @@
+﻿@model List<MarcusRent.Models.CarViewModel>
+
+@{
+    ViewData["Title"] = "Car List";
+}
+
+<h1>Car List</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th>Price/Day</th>
+            <th>Images</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var galleryId = "gallery_" + item.CarId;
+            <tr>
+                <td>
+                    @if (item.ImageUrls != null && item.ImageUrls.Any())
+                    {
+                        <div id="@galleryId" class="image-gallery" style="position: relative; width: 220px; height: 140px;">
+                            <img src="@item.ImageUrls[0]" alt="Car Image" style="width: 220px; height: 140px; object-fit: cover; border-radius:4px; border:1px solid #ccc;" />
+                            <button type="button" class="prev-btn" style="position: absolute; top: 50%; left: 5px; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border:none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">&#10094;</button>
+                            <button type="button" class="next-btn" style="position: absolute; top: 50%; right: 5px; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border:none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">&#10095;</button>
+                            <input type="hidden" class="image-urls" value="@string.Join(";", item.ImageUrls)" />
+                        </div>
+                    }
+                    else
+                    {
+                        <span>No images</span>
+                    }
+                </td>
+                <td>@item.Brand</td>
+                <td>@item.Model</td>
+                <td>@item.Year</td>
+                <td>@item.PricePerDay.ToString("C")</td>
+               
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.CarId" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.image-gallery').forEach(gallery => {
+            const img = gallery.querySelector('img');
+            const urls = gallery.querySelector('.image-urls').value.split(';');
+            let index = 0;
+
+            const prevBtn = gallery.querySelector('.prev-btn');
+            const nextBtn = gallery.querySelector('.next-btn');
+
+            function showImage(i) {
+                if (i < 0) i = urls.length - 1;
+                if (i >= urls.length) i = 0;
+                index = i;
+                img.src = urls[index];
+            }
+
+            prevBtn.addEventListener('click', () => {
+                showImage(index - 1);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                showImage(index + 1);
+            });
+        });
+    </script>
+}

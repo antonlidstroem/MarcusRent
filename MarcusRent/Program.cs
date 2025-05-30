@@ -23,6 +23,9 @@ namespace MarcusRent
              .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
             var app = builder.Build();
 
 

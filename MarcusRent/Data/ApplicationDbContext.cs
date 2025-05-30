@@ -11,6 +11,9 @@ namespace MarcusRent.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<CarImage> CarImages { get; set; }
 
+        public DbSet<CarOrder> CarOrders { get; set; }
+
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -20,10 +23,18 @@ namespace MarcusRent.Data
         {
             base.OnModelCreating(builder);
 
-            // Many-to-many Order <-> Car
-            builder.Entity<Order>()
-                .HasMany(o => o.Cars)
-                .WithMany(c => c.Orders);
+            builder.Entity<CarOrder>()
+                .HasKey(co => new { co.CarId, co.OrderId });
+
+            builder.Entity<CarOrder>()
+                .HasOne(co => co.Car)
+                .WithMany(c => c.CarOrders)
+                .HasForeignKey(co => co.CarId);
+
+            builder.Entity<CarOrder>()
+                .HasOne(co => co.Order)
+                .WithMany(o => o.CarOrders)
+                .HasForeignKey(co => co.OrderId);
         }
     }
 }

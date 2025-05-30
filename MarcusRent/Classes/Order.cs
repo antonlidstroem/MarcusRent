@@ -6,7 +6,7 @@ namespace MarcusRent.Classes
     {
         public int OrderId { get; set; }
         public ApplicationUser Customer { get; set; }
-        public List<Car> Cars { get; set; } = new();
+        public ICollection<CarOrder> CarOrders { get; set; } = new List<CarOrder>();
 
         public DateTime StartDate { get; set; }
 
