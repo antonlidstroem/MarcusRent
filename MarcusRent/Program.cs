@@ -6,7 +6,7 @@ namespace MarcusRent
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +16,22 @@ namespace MarcusRent
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-            builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+            options.SignIn.RequireConfirmedAccount = true)
+             .AddRoles<IdentityRole>()
+             .AddEntityFrameworkStores<ApplicationDbContext>();
+
 
             var app = builder.Build();
+
+
+            //Anropar SeedData
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await SeedData.InitializeAsync(services);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -38,8 +49,11 @@ namespace MarcusRent
             app.UseStaticFiles();
 
             app.UseRouting();
+            
+            app.UseAuthentication();
 
             app.UseAuthorization();
+            
 
             app.MapControllerRoute(
                 name: "default",
