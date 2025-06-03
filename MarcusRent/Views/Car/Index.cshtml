@@ -57,29 +57,5 @@
 </table>
 
 @section Scripts {
-    <script>
-        document.querySelectorAll('.image-gallery').forEach(gallery => {
-            const img = gallery.querySelector('img');
-            const urls = gallery.querySelector('.image-urls').value.split(';');
-            let index = 0;
-
-            const prevBtn = gallery.querySelector('.prev-btn');
-            const nextBtn = gallery.querySelector('.next-btn');
-
-            function showImage(i) {
-                if (i < 0) i = urls.length - 1;
-                if (i >= urls.length) i = 0;
-                index = i;
-                img.src = urls[index];
-            }
-
-            prevBtn.addEventListener('click', () => {
-                showImage(index - 1);
-            });
-
-            nextBtn.addEventListener('click', () => {
-                showImage(index + 1);
-            });
-        });
-    </script>
+    <script src="~/js/site.js"></script>
 }
