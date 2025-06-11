@@ -1,3 +1,4 @@
+using MarcusRent.Classes;
 using MarcusRent.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

@@ -11,6 +11,6 @@ namespace MarcusRent.Classes
         public Order Order { get; set; }
 
         public int RentalDays { get; set; }
-        public float Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

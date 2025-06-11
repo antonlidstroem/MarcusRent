@@ -1,6 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-public class ApplicationUser : IdentityUser
+namespace MarcusRent.Classes
 {
-    public bool ApprovedByAdmin { get; set; }
+    public class ApplicationUser : IdentityUser
+    {
+        public bool ApprovedByAdmin { get; set; }
+    }
 }
+
+

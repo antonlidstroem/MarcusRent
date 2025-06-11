@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MarcusRent.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    //public class ApplicationDbContext : IdentityDbContext
+        public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+
     {
         public DbSet<Car> Cars { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -35,6 +37,8 @@ namespace MarcusRent.Data
                 .HasOne(co => co.Order)
                 .WithMany(o => o.CarOrders)
                 .HasForeignKey(co => co.OrderId);
+
+           
         }
     }
 }

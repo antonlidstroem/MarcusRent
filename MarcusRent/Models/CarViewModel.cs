@@ -6,7 +6,7 @@
         public string Brand { get; set; }
         public string Model { get; set; }
         public int Year { get; set; }
-        public float PricePerDay { get; set; }
+        public decimal PricePerDay { get; set; }
         public List<string> ImageUrls { get; set; }
     }
 }

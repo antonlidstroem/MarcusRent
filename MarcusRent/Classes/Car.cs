@@ -1,4 +1,6 @@
-﻿namespace MarcusRent.Classes
+﻿using MarcusRent.Classes;
+
+namespace MarcusRent.Classes
 {
     public class Car
     {
@@ -9,9 +11,13 @@
         public string Brand { get; set; }
         public string Model { get; set; }
         public int Year { get; set; }
-        public float PricePerDay { get; set; }
+        public decimal PricePerDay { get; set; }
         public bool Available { get; set; }
 
-        public ICollection<CarOrder> CarOrders { get; set; } = new List<CarOrder>();
+        //public ICollection<CarOrder> CarOrders { get; set; } = new List<CarOrder>();
+
+        public ICollection<CarOrder> CarOrders { get; set; }
+
     }
 }
+
