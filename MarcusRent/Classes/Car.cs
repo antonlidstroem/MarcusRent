@@ -7,6 +7,7 @@ namespace MarcusRent.Classes
         public int CarId { get; set; }
 
         public List<CarImage> CarImages { get; set; } = new();
+        //public string Description { get; set; }
 
         public string Brand { get; set; }
         public string Model { get; set; }
@@ -16,7 +17,7 @@ namespace MarcusRent.Classes
 
         //public ICollection<CarOrder> CarOrders { get; set; } = new List<CarOrder>();
 
-        public ICollection<CarOrder> CarOrders { get; set; }
+
 
     }
 }

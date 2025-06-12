@@ -1,45 +1,36 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.Reflection.Emit;
 using MarcusRent.Classes;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace MarcusRent.Data
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    //public class ApplicationDbContext : IdentityDbContext
-        public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public DbSet<Car> Cars { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<CarImage> CarImages { get; set; }
 
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
-        public DbSet<Car> Cars { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<CarImage> CarImages { get; set; }
+    }
 
-        public DbSet<CarOrder> CarOrders { get; set; }
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
 
+        builder.Entity<Car>()
+            .Property(c => c.PricePerDay)
+            .HasPrecision(18, 2);
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+        builder.Entity<Order>()
+            .Property(o => o.Price)
+            .HasPrecision(18, 2);
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-
-            builder.Entity<CarOrder>()
-                .HasKey(co => new { co.CarId, co.OrderId });
-
-            builder.Entity<CarOrder>()
-                .HasOne(co => co.Car)
-                .WithMany(c => c.CarOrders)
-                .HasForeignKey(co => co.CarId);
-
-            builder.Entity<CarOrder>()
-                .HasOne(co => co.Order)
-                .WithMany(o => o.CarOrders)
-                .HasForeignKey(co => co.OrderId);
-
-           
-        }
+        builder.Entity<Order>()
+            .HasOne(o => o.Car)
+            .WithMany()
+            .HasForeignKey(o => o.CarId)
+            .OnDelete(DeleteBehavior.Restrict); // valfritt men bra praxis
     }
 }
 

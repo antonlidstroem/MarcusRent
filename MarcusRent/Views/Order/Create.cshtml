@@ -1,71 +1,54 @@
-﻿@* @model MarcusRent.Classes.Order *@
-@model MarcusRent.Models.OrderViewModel
-@* @model MarcusRent.Classes.orderViewModel *@
-
-
+﻿@model MarcusRent.Models.OrderViewModel
 
 @{
-	ViewData["Title"] = "Create";
+    decimal pricePerDay = ViewBag.PricePerDay ?? 0m;
 }
 
-<h1>Create</h1>
+<h2>Boka bil</h2>
 
-<h4>Order</h4>
-<hr />
-<div class="row">
-	<div class="col-md-4">
-		<form asp-action="Create" method="post">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group">
-				<label asp-for="StartDate" class="control-label"></label>
-				<input asp-for="StartDate" class="form-control" />
-				<span asp-validation-for="StartDate" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="EndDate" class="control-label"></label>
-				<input asp-for="EndDate" class="form-control" />
-				<span asp-validation-for="EndDate" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Price" class="control-label"></label>
-				<input asp-for="Price" class="form-control" />
-				<span asp-validation-for="Price" class="text-danger"></span>
-			</div>
-			<div class="form-group form-check">
-				<label class="form-check-label">
-					<input class="form-check-input" asp-for="ActiveOrder" /> @Html.DisplayNameFor(model => model.ActiveOrder)
-				</label>
-			</div>
-			<div class="form-group">
-				<label asp-for="CarId" class="control-label"></label>
-				<select asp-for="CarId" class="form-control" asp-items="Model.CarOptions">
-					<option value="">-- Välj bil --</option>
-				</select>
-				<span asp-validation-for="CarId" class="text-danger"></span>
-			</div>
+<p>Bokar bil: @ViewBag.CarInfo</p>
 
-			<div class="form-group">
-				<label asp-for="UserId" class="control-label"></label>
-				<select asp-for="UserId" class="form-control" asp-items="Model.UserOptions">
-					<option value="">-- Välj användare --</option>
-				</select>
-				<span asp-validation-for="UserId" class="text-danger"></span>
-			</div>
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="CarId" />
 
+    <div class="form-group">
+        <label asp-for="StartDate"></label>
+        <input asp-for="StartDate" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
 
-			<div class="form-group">
-				<input type="submit" value="Create" class="btn btn-primary" />
-			</div>
-		</form>
-	</div>
-</div>
+    <div class="form-group">
+        <label asp-for="EndDate"></label>
+        <input asp-for="EndDate" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
 
-<div>
-	<a asp-action="Index">Back to List</a>
-</div>
+    <button type="submit" class="btn btn-primary">Boka</button>
+</form>
 
-@section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-}
+<script>
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const priceInput = document.getElementById('price');
+    const pricePerDay = @pricePerDay;
+
+    function calculatePrice() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        if (startDate && endDate && endDate > startDate) {
+            const diffTime = endDate - startDate;
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            const totalPrice = diffDays * pricePerDay;
+            priceInput.value = totalPrice.toFixed(2) + " kr";
+        } else {
+            priceInput.value = "";
+        }
+    }
+
+    startDateInput.addEventListener('change', calculatePrice);
+    endDateInput.addEventListener('change', calculatePrice);
+
+    // Kör beräkning när sidan laddas
+    calculatePrice();
+</script>

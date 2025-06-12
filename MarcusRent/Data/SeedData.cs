@@ -111,73 +111,59 @@ public class SeedData
         // 5. Skapa ordrar
         if (!context.Orders.Any())
         {
-            var allUsers = users;
-            var allCars = await context.Cars.ToListAsync();
+            var Cars = await context.Cars.ToListAsync();
 
             var orders = new List<Order>
             {
                 new Order
                 {
-                    Customer = allUsers[0],
+                    Customer = users[0],
+                    UserId = users[0].Id,
                     StartDate = DateTime.Today,
                     EndDate = DateTime.Today.AddDays(3),
-                    Price = (allCars[0].PricePerDay + allCars[1].PricePerDay) * 3,
+                    Price = Cars[0].PricePerDay * 3,
                     ActiveOrder = true,
-                    CarOrders = new List<CarOrder>
-                    {
-                        new CarOrder { Car = allCars[0] },
-                        new CarOrder { Car = allCars[1] }
-                    }
+                    Car = Cars[0]
                 },
                 new Order
                 {
-                    Customer = allUsers[1],
+                    Customer = users[1],
+                    UserId = users[1].Id,
                     StartDate = DateTime.Today.AddDays(-10),
                     EndDate = DateTime.Today.AddDays(-7),
-                    Price = allCars[2].PricePerDay * 3,
+                    Price = Cars[2].PricePerDay * 3,
                     ActiveOrder = false,
-                    CarOrders = new List<CarOrder>
-                    {
-                        new CarOrder { Car = allCars[2] }
-                    }
+                    Car = Cars[2]
                 },
                 new Order
                 {
-                    Customer = allUsers[2],
+                    Customer = users[2],
+                    UserId = users[2].Id,
                     StartDate = DateTime.Today.AddDays(5),
                     EndDate = DateTime.Today.AddDays(10),
-                    Price = (allCars[3].PricePerDay + allCars[4].PricePerDay) * 5,
+                    Price = Cars[3].PricePerDay * 5,
                     ActiveOrder = true,
-                    CarOrders = new List<CarOrder>
-                    {
-                        new CarOrder { Car = allCars[3] },
-                        new CarOrder { Car = allCars[4] }
-                    }
+                    Car = Cars[3]
                 },
                 new Order
                 {
-                    Customer = allUsers[0],
+                    Customer = users[0],
+                    UserId = users[0].Id,
                     StartDate = DateTime.Today.AddDays(-3),
                     EndDate = DateTime.Today,
-                    Price = allCars[1].PricePerDay * 3,
+                    Price = Cars[1].PricePerDay * 3,
                     ActiveOrder = false,
-                    CarOrders = new List<CarOrder>
-                    {
-                        new CarOrder { Car = allCars[1] }
-                    }
+                    Car = Cars[1]
                 },
                 new Order
                 {
-                    Customer = allUsers[1],
+                    Customer = users[1],
+                    UserId = users[1].Id,
                     StartDate = DateTime.Today.AddDays(1),
                     EndDate = DateTime.Today.AddDays(4),
-                    Price = (allCars[0].PricePerDay + allCars[4].PricePerDay) * 3,
+                    Price = Cars[4].PricePerDay * 3,
                     ActiveOrder = true,
-                    CarOrders = new List<CarOrder>
-                    {
-                        new CarOrder { Car = allCars[0] },
-                        new CarOrder { Car = allCars[4] }
-                    }
+                    Car = Cars[4]
                 }
             };
 

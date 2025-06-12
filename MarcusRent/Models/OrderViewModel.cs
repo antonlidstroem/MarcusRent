@@ -1,19 +1,39 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MarcusRent.Models
 {
     public class OrderViewModel
     {
         public int OrderId { get; set; }
+
+        //[Required]
+        public int CarId { get; set; }
+
+        [Display(Name = "Från")]
+        [DataType(DataType.Date)]
+
         public DateTime StartDate { get; set; }
+
+        [Display(Name = "Till")]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
+
         public decimal Price { get; set; }
         public bool ActiveOrder { get; set; }
 
-        public int CarId { get; set; }      // Vald bil
-        public string UserId { get; set; }  // Vald användare
+        [BindNever]
+        public List<SelectListItem> Cars { get; set; } = new List<SelectListItem>();
 
-        public IEnumerable<SelectListItem> CarOptions { get; set; }
-        public IEnumerable<SelectListItem> UserOptions { get; set; }
+        public decimal PricePerDay { get; set; }
+
     }
 }
+
+
+
+
+    
+

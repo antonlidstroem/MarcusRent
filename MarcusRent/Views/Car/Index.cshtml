@@ -45,6 +45,14 @@
                 <td>@item.Model</td>
                 <td>@item.Year</td>
                 <td>@item.PricePerDay.ToString("C")</td>
+
+                <td>
+                    @* Länk till Order/Create med bilens id som query-param *@
+                    <a asp-controller="Order" asp-action="Create" asp-route-carId="@item.CarId" class="btn btn-primary">Boka här</a>
+                </td>
+
+
+
                
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-sm btn-warning">Edit</a>

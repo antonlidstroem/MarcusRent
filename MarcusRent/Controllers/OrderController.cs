@@ -9,6 +9,9 @@ using MarcusRent.Classes;
 using MarcusRent.Data;
 using MarcusRent.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace MarcusRent.Controllers
 {
@@ -16,27 +19,39 @@ namespace MarcusRent.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public OrderController(ApplicationDbContext context, IMapper mapper)
+        public OrderController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _userManager = userManager;
         }
+
+
+
+
+
 
 
 
         //GET: Order
-        public async Task<IActionResult> Index()
+      
+           public async Task<IActionResult> Index()
         {
             var orders = await _context.Orders
+                .Include(o => o.Customer)  // Hämtar med kundinfo
                 .ToListAsync();
 
             var model = _mapper.Map<List<OrderViewModel>>(orders);
-
             return View(model);
         }
 
-        
+
+
+
+
+
 
 
 
@@ -57,109 +72,113 @@ namespace MarcusRent.Controllers
 
         }
 
-        public IActionResult Create()
+        // GET: Order/Create?carId=123
+        //[Authorize]
+        public IActionResult Create(int carId)
         {
+            if (!User.Identity.IsAuthenticated || User.Identity == null)
+            {
+                TempData["Message"] = "Du måste vara inloggad för att boka en bil.";
+                return RedirectToPage("/Account/Login", new { area = "Identity", returnUrl = $"/Order/Create?carId={carId}" });
+            }
+
+
+            var car = _context.Cars.FirstOrDefault(c => c.CarId == carId);
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
+            ViewBag.PricePerDay = car.PricePerDay;
+
             var viewModel = new OrderViewModel
             {
-                CarOptions = _context.Cars.Select(c => new SelectListItem
-                {
-                    Value = c.CarId.ToString(),
-                    Text = $"{c.Brand} {c.Model}"
-                }).ToList(),
+                StartDate = DateTime.Today,
+                EndDate = DateTime.Today.AddDays(1),
+                CarId = car.CarId,
+                //Description = $"{car.Brand} {car.Model} ({car.Year})"
 
-                UserOptions = _context.Users.Select(u => new SelectListItem
-                {
-                    Value = u.Id,
-                    Text = u.Email
-                }).ToList()
             };
 
+            
             return View(viewModel);
         }
 
 
 
 
-        // GET: Order/Create
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
-
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("OrderId,StartDate,EndDate,Price,ActiveOrder")] Order order)
-
-
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(order);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(order);
-        //}
-
-        // POST: Order/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 
 
 
 
+
+
+        //[Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderViewModel viewModel)
         {
-            if (ModelState.IsValid)
+
+
+            DebugModelStatePostCreate();
+
+            if (!ModelState.IsValid)
             {
-                // Mappa ViewModel till Order-entitet
-                var order = _mapper.Map<Order>(viewModel);
+                viewModel.Cars = _context.Cars
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CarId.ToString(),
+                        Text = c.Brand + " " + c.Model
+                    }).ToList();
 
-  
-                // Här kopplar du ihop navigation propertyn
-                order.Customer = await _context.Users.FirstOrDefaultAsync(u => u.Id == viewModel.UserId);
-
-                // Du *behöver inte* sätta order.UserId = viewModel.UserId manuellt, EF sätter det när du tilldelar Customer.
-                // Men du *kan* sätta båda om du vill vara tydlig:
-                order.UserId = viewModel.UserId;
-
-
-                _context.Orders.Add(order);
-                await _context.SaveChangesAsync();
-
-                // Skapa koppling till bil via CarOrder
-                var carOrder = new CarOrder
-                {
-                    CarId = viewModel.CarId,
-                    OrderId = order.OrderId
-                };
-                _context.CarOrders.Add(carOrder);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                return View(viewModel);
             }
 
-            // Om validering misslyckas: fyll dropdowns igen
-            viewModel.CarOptions = _context.Cars.Select(c => new SelectListItem
-            {
-                Value = c.CarId.ToString(),
-                Text = $"{c.Brand} {c.Model}"
-            });
+            // Kontrollera om bilen redan är bokad under perioden
+            bool isBooked = await _context.Orders.AnyAsync(o =>
+                o.CarId == viewModel.CarId &&
+                o.StartDate < viewModel.EndDate &&
+                viewModel.StartDate < o.EndDate);
 
-            viewModel.UserOptions = _context.Users.Select(u => new SelectListItem
+            if (isBooked)
             {
-                Value = u.Id,
-                Text = u.Email
-            });
+                ModelState.AddModelError("", "Den här bilen är redan bokad under den valda perioden.");
+                viewModel.Cars = _context.Cars
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CarId.ToString(),
+                        Text = c.Brand + " " + c.Model
+                    }).ToList();
 
-            return View(viewModel);
+                return View(viewModel);
+            }
+
+            var order = _mapper.Map<Order>(viewModel);
+            order.UserId = _userManager.GetUserId(User);
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
 
 
+        //FELSÖKNING
+        private void DebugModelStatePostCreate()
+        {
+            foreach (var entry in ModelState)
+            {
+                var key = entry.Key;
+                var errors = entry.Value.Errors;
+
+                foreach (var error in errors)
+                {
+                    Console.WriteLine($"ModelState error for {key}: {error.ErrorMessage}");
+                }
+            }
+        }
 
 
 
