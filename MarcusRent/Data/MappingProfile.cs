@@ -16,7 +16,11 @@ namespace MarcusRent.Data
 
             // Order -> OrderViewModel
             CreateMap<Order, OrderViewModel>()
-                .ForMember(dest => dest.Cars, opt => opt.Ignore()); // sätts manuellt i controllern
+                .ForMember(dest => dest.Cars, opt => opt.Ignore()) // sätts manuellt i controller
+                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Car.Brand))
+                .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Car.Model))
+                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Car.Year))
+                .ForMember(dest => dest.PricePerDay, opt => opt.MapFrom(src => src.Car.PricePerDay));
 
             // OrderViewModel -> Order
             CreateMap<OrderViewModel, Order>()

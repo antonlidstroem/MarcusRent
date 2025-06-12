@@ -1,7 +1,12 @@
 ﻿@model MarcusRent.Models.OrderViewModel
 
 @{
-    decimal pricePerDay = ViewBag.PricePerDay ?? 0m;
+    // Säkerställ invariant culture för decimal i JavaScript
+    var pricePerDayJs = Model.Price == 0m
+        ? (ViewBag.PricePerDay ?? 0m)
+        : Model.Price; // Om Model.Price redan satt, annars ViewBag
+
+    string pricePerDayStr = pricePerDayJs.ToString(System.Globalization.CultureInfo.InvariantCulture);
 }
 
 <h2>Boka bil</h2>
@@ -13,42 +18,49 @@
 
     <div class="form-group">
         <label asp-for="StartDate"></label>
-        <input asp-for="StartDate" class="form-control" />
+        <input asp-for="StartDate" class="form-control" type="date" id="startDate" />
         <span asp-validation-for="StartDate" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="EndDate"></label>
-        <input asp-for="EndDate" class="form-control" />
+        <input asp-for="EndDate" class="form-control" type="date" id="endDate" />
         <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Pris</label>
+        <input type="text" id="price" class="form-control" readonly />
     </div>
 
     <button type="submit" class="btn btn-primary">Boka</button>
 </form>
 
-<script>
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
-    const priceInput = document.getElementById('price');
-    const pricePerDay = @pricePerDay;
+@section Scripts {
+    <script>
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const priceInput = document.getElementById('price');
+        const pricePerDay = parseFloat('@pricePerDayStr');
 
-    function calculatePrice() {
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(endDateInput.value);
+        function calculatePrice() {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
 
-        if (startDate && endDate && endDate > startDate) {
-            const diffTime = endDate - startDate;
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            const totalPrice = diffDays * pricePerDay;
-            priceInput.value = totalPrice.toFixed(2) + " kr";
-        } else {
-            priceInput.value = "";
+            if (startDateInput.value && endDateInput.value && endDate > startDate) {
+                const diffTime = endDate - startDate;
+                const diffDays = diffTime / (1000 * 60 * 60 * 24);
+                const totalPrice = diffDays * pricePerDay;
+                priceInput.value = totalPrice.toFixed(2) + " kr";
+            } else {
+                priceInput.value = "";
+            }
         }
-    }
 
-    startDateInput.addEventListener('change', calculatePrice);
-    endDateInput.addEventListener('change', calculatePrice);
+        startDateInput.addEventListener('change', calculatePrice);
+        endDateInput.addEventListener('change', calculatePrice);
 
-    // Kör beräkning när sidan laddas
-    calculatePrice();
-</script>
+        // Beräkna pris direkt när sidan laddas (om datum redan ifyllda)
+        calculatePrice();
+    </script>
+}

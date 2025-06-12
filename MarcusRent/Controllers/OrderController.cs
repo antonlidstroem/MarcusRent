@@ -41,6 +41,7 @@ namespace MarcusRent.Controllers
         {
             var orders = await _context.Orders
                 .Include(o => o.Customer)  // Hämtar med kundinfo
+                .Include(c => c.Car)
                 .ToListAsync();
 
             var model = _mapper.Map<List<OrderViewModel>>(orders);
@@ -89,7 +90,7 @@ namespace MarcusRent.Controllers
                 return NotFound();
             }
 
-            ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
+            ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year}) \n\n {car.PricePerDay} kr/dag";
             ViewBag.PricePerDay = car.PricePerDay;
 
             var viewModel = new OrderViewModel
