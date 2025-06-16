@@ -28,8 +28,9 @@ namespace MarcusRent.Models
         public List<SelectListItem> Cars { get; set; } = new List<SelectListItem>();
 
         public decimal PricePerDay { get; set; }
-
+        [Required]
         public string Brand { get; set; }
+        [Required]
         public string Model { get; set; }
         public int Year { get; set; }
 

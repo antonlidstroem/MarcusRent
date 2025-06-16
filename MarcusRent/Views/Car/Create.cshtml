@@ -1,23 +1,66 @@
-﻿@model OrderViewModel
+﻿@model MarcusRent.Models.CarViewModel
+
+<h2>Skapa ny bil</h2>
 
 <form asp-action="Create" method="post">
     <div class="form-group">
-        <label asp-for="CarId"></label>
-        <select asp-for="CarId" asp-items="Model.Cars" class="form-control"></select>
-        <span asp-validation-for="CarId" class="text-danger"></span>
+        <label asp-for="Brand"></label>
+        <input asp-for="Brand" class="form-control" type="text" />
+        <span asp-validation-for="Brand" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="StartDate"></label>
-        <input asp-for="StartDate" class="form-control" type="date" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
+        <label asp-for="Model"></label>
+        <input asp-for="Model" class="form-control" type="text" />
+        <span asp-validation-for="Model" class="text-danger"></span>
+    </div>
+
+
+   
+
+
+
+
+
+
+
+    <div class="form-group">
+        <label asp-for="Year"></label>
+        <input asp-for="Year" class="form-control" type="number" min="1900" max="2100" />
+        <span asp-validation-for="Year" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="EndDate"></label>
-        <input asp-for="EndDate" class="form-control" type="date" />
-        <span asp-validation-for="EndDate" class="text-danger"></span>
+        <label asp-for="PricePerDay"></label>
+        <input asp-for="PricePerDay" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="PricePerDay" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Skapa bokning</button>
+
+    
+
+
+    <div class="form-group">
+        <label asp-for="ImageUrls">Bildlänkar</label>
+        <input name="ImageUrls" class="form-control mb-1" placeholder="Bild-URL 1" />
+        <input name="ImageUrls" class="form-control mb-1" placeholder="Bild-URL 2" />
+        <input name="ImageUrls" class="form-control mb-1" placeholder="Bild-URL 3" />
+        <small class="form-text text-muted">Fyll i en eller flera bildlänkar.</small>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Available"></label>
+        <input asp-for="Available" type="checkbox" />
+        <span asp-validation-for="Available" class="text-danger"></span>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-primary">Skapa bil</button>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

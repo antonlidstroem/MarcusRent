@@ -14,6 +14,17 @@ namespace MarcusRent.Data
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.CarImages.Select(ci => ci.Url)))
                 .ReverseMap();
 
+
+            CreateMap<CarViewModel, Car>()
+                .ForMember(dest => dest.CarImages, 
+                opt => opt.MapFrom(src => src.ImageUrls
+                .Where(url => !string.IsNullOrWhiteSpace(url))
+                .Select(url => new CarImage { Url = url })));
+
+
+     
+
+
             // Order -> OrderViewModel
             CreateMap<Order, OrderViewModel>()
                 .ForMember(dest => dest.Cars, opt => opt.Ignore()) // sätts manuellt i controller

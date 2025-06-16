@@ -1,5 +1,7 @@
 using MarcusRent.Classes;
 using MarcusRent.Data;
+using MarcusRent.Repositories;
+using MarcusRental2.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +27,12 @@ namespace MarcusRent
 
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+            builder.Services.AddScoped<ICarRepository, CarRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+
+
 
 
             var app = builder.Build();

@@ -122,7 +122,7 @@ namespace MarcusRent.Controllers
         {
 
 
-            DebugModelStatePostCreate();
+            DebugHelper.DebugModelStatePostCreate(ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -165,21 +165,6 @@ namespace MarcusRent.Controllers
         }
 
 
-
-        //FELSÖKNING
-        private void DebugModelStatePostCreate()
-        {
-            foreach (var entry in ModelState)
-            {
-                var key = entry.Key;
-                var errors = entry.Value.Errors;
-
-                foreach (var error in errors)
-                {
-                    Console.WriteLine($"ModelState error for {key}: {error.ErrorMessage}");
-                }
-            }
-        }
 
 
 
@@ -271,5 +256,11 @@ namespace MarcusRent.Controllers
         {
             return _context.Orders.Any(e => e.OrderId == id);
         }
+
+
+       
+
     }
+
+
 }

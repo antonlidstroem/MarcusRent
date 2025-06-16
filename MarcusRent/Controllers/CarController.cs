@@ -9,80 +9,108 @@ using MarcusRent.Classes;
 using MarcusRent.Data;
 using MarcusRent.Models;
 using AutoMapper;
+using MarcusRent.Repositories;
 
 namespace MarcusRent.Controllers
 {
     public class CarController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ICarRepository _carRepository;
 
-        public CarController(ApplicationDbContext context, IMapper mapper)
+        //public CarController(ApplicationDbContext context, IMapper mapper, ICarRepository carRepository)
+        public CarController(ApplicationDbContext context, IMapper mapper, ICarRepository carRepository)
         {
-            _context = context;
+            //_context = context;
             _mapper = mapper;
+            _carRepository = carRepository;
         }
 
         // GET: Car
         public async Task<IActionResult> Index()
         {
-
-            var cars = await _context.Cars
-            .Include(c => c.CarImages)
-           .ToListAsync();
+            var cars = await _carRepository.GetAllAsync();
 
             var model = _mapper.Map<List<CarViewModel>>(cars);
 
             return View(model);
         }
 
+
         // GET: Car/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.CarId == id);
-            if (car == null)
-            {
-                return NotFound();
-            }
+            var car = await _carRepository.GetByIdAsync(id.Value);
+            if (car == null) return NotFound();
 
             return View(car);
         }
 
-        // GET: Car/Create
+
+
+
+
+        //GET: Car/Create
         public IActionResult Create()
         {
             return View();
         }
+
+
+
+
+
+
+
+
+
+
+
 
         // POST: Car/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CarId,Brand,Model,Year,PricePerDay,Available")] Car car)
+        public async Task<IActionResult> Create(CarViewModel viewModel)
         {
-            if (ModelState.IsValid)
+
+            DebugHelper.DebugModelStatePostCreate(ModelState);
+
+            if (!ModelState.IsValid)
             {
-                _context.Add(car);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(viewModel);
             }
-            return View(car);
+            var car = _mapper.Map<Car>(viewModel);
+
+            if (viewModel.ImageUrls != null)
+            {
+                var validImageUrls = viewModel.ImageUrls
+                    .Where(url => !string.IsNullOrWhiteSpace(url))
+                    .ToList();
+
+                if (validImageUrls.Any())
+                {
+                    car.CarImages = validImageUrls.Select(url => new CarImage { Url = url }).ToList();
+                }
+            }
+
+            await _carRepository.AddAsync(car);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Car/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
                 return NotFound();
 
-            var car = await _context.Cars.FindAsync(id);
+            //var car = await _context.Cars.FindAsync(id);
+            var car = await _carRepository.GetByIdAsync(id);
             if (car == null)
                 return NotFound();
 
@@ -93,7 +121,7 @@ namespace MarcusRent.Controllers
         // POST: Car/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CarViewModel model)
+        public async Task<IActionResult> Edit(int? id, CarViewModel model)
         {
             if (id != model.CarId)
                 return NotFound();
@@ -101,7 +129,8 @@ namespace MarcusRent.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var carEntity = await _context.Cars.FindAsync(id);
+            //var carEntity = await _context.Cars.FindAsync(id);
+            var carEntity = await _carRepository.GetByIdAsync(id.Value);
             if (carEntity == null)
                 return NotFound();
 
@@ -109,11 +138,11 @@ namespace MarcusRent.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _carRepository.UpdateAsync(carEntity);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CarExists(id))
+                if (!await CarExists(id.Value))
                     return NotFound();
                 else
                     throw;
@@ -121,6 +150,8 @@ namespace MarcusRent.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
 
         // GET: Car/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -130,8 +161,10 @@ namespace MarcusRent.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.CarId == id);
+            //var car = await _context.Cars
+
+            var car = await _carRepository.GetByIdAsync(id.Value);
+            //.FirstOrDefaultAsync(m => m.CarId == id);
             if (car == null)
             {
                 return NotFound();
@@ -140,24 +173,19 @@ namespace MarcusRent.Controllers
             return View(car);
         }
 
-        // POST: Car/Delete/5
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
-            if (car != null)
-            {
-                _context.Cars.Remove(car);
-            }
-
-            await _context.SaveChangesAsync();
+            await _carRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CarExists(int id)
+        private async Task<bool> CarExists(int id)
         {
-            return _context.Cars.Any(e => e.CarId == id);
+            return await _carRepository.ExistsAsync(id);
         }
     }
+        
 }
