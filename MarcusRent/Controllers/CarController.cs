@@ -306,11 +306,12 @@ namespace MarcusRent.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError("", "Bilen kan inte tas bort eftersom den är kopplad till ordrar.");
-                var model = _mapper.Map<CarViewModel>(car);
-                return View("Delete", model);
+                TempData["ErrorMessage"] = "Bilen kan inte tas bort eftersom den är kopplad till ordrar.";
+                return RedirectToAction("Index", "Admin");
             }
+
         }
+
 
 
     }

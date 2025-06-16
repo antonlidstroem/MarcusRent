@@ -4,6 +4,13 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <h1>Admin Dashboard</h1>
 
 <h2>Bilar</h2>
