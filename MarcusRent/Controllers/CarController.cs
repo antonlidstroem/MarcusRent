@@ -142,7 +142,7 @@ namespace MarcusRent.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await CarExists(id.Value))
+                if (!await _carRepository.ExistsAsync(id.Value))
                     return NotFound();
                 else
                     throw;
@@ -154,38 +154,49 @@ namespace MarcusRent.Controllers
 
 
         // GET: Car/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                await _carRepository.DeleteAsync(id);
+                return Json(new { success = true });
             }
-
-            //var car = await _context.Cars
-
-            var car = await _carRepository.GetByIdAsync(id.Value);
-            //.FirstOrDefaultAsync(m => m.CarId == id);
-            if (car == null)
+            catch (DbUpdateException ex)
             {
-                return NotFound();
+                // Anta att det handlar om en FK-konflikt med Orders
+                return Json(new { success = false, message = "Bilen kan inte tas bort eftersom den är registrerad i en eller flera ordrar." });
             }
-
-            return View(car);
         }
 
 
-        [HttpPost, ActionName("Delete")]
+
+
+
+
+
+
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _carRepository.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _carRepository.DeleteAsync(id);
+            }
+            catch (DbUpdateException)
+            {
+                return BadRequest("Bilen kunde inte tas bort. Den är kopplad till en eller flera ordrar.");
+            }
+
+            return Ok();
         }
 
-        private async Task<bool> CarExists(int id)
-        {
-            return await _carRepository.ExistsAsync(id);
-        }
+
     }
-        
+
 }
+
+

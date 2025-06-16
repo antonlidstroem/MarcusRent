@@ -1,59 +1,119 @@
 ﻿@model MarcusRent.Models.AdminDashboardViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<h1>Index</h1>
+<h1>Admin Dashboard</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h2>Bilar</h2>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Brand)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Year)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PricePerDay)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Available)
-            </th>
+            <th>Märke</th>
+            <th>Modell</th>
+            <th>Tillgänglig</th>
+            <th>Pris per dag</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PricePerDay)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Available)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CarId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CarId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CarId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var car in Model.Cars)
+        {
+            <tr>
+                <td>@car.Brand</td>
+                <td>@car.Model</td>
+                <td>@(car.Available ? "Ja" : "Nej")</td>
+                <td>@car.PricePerDay kr</td>
+                <td>
+                    <a asp-controller="Car" asp-action="Edit" asp-route-id="@car.CarId" class="btn btn-sm btn-warning">Edit</a>
+                    @* <a asp-controller="Car" asp-action="Delete" asp-route-id="@car.CarId" class="btn btn-sm btn-danger">Delete</a> *@
+
+
+                    @* <button class="btn btn-danger" onclick="confirmDelete(@car.CarId)">Ta bort</button> *@
+                    <form id="deleteForm">@Html.AntiForgeryToken()</form>
+                    <button onclick="confirmDelete(@car.CarId)">Ta bort</button>
+
+
+
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<h2>Ordrar</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Bil</th>
+            <th>Kund</th>
+            <th>Startdatum</th>
+            <th>Slutdatum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Orders)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.CarName</td>
+                <td>@order.CustomerName</td>
+                <td>@order.StartDate.ToShortDateString()</td>
+                <td>@order.EndDate.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Kunder</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Namn</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model.Customers)
+        {
+            <tr>
+                <td>@customer.FullName</td>
+                <td>@customer.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<script>
+    function confirmDelete(carId) {
+        if (confirm('Är du säker på att du vill ta bort denna bil?')) {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch(`/Car/DeleteConfirmed/${carId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `__RequestVerificationToken=${token}`
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload(); // Uppdatera sidan
+                } else {
+                    return response.text().then(text => {
+                        alert('Det gick inte att ta bort bilen. Kanske finns den i en eller flera ordrar.');
+                        console.error(text);
+                    });
+                }
+            })
+            .catch(error => {
+                alert('Ett fel uppstod: ' + error);
+                console.error(error);
+            });
+        }
+    }
+</script>
+
