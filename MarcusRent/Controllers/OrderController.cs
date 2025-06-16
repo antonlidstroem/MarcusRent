@@ -78,7 +78,7 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderViewModel viewModel)
         {
-            DebugHelper.DebugModelStatePostCreate(ModelState);
+            //DebugHelper.DebugModelStatePostCreate(ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -108,6 +108,8 @@ namespace MarcusRent.Controllers
             order.UserId = _userManager.GetUserId(User);
 
             await _orderRepository.AddOrderAsync(order);
+
+            TempData["BookedCar"] = "Du har nu bokat bilen!";
 
             return RedirectToAction(nameof(Index));
         }

@@ -4,6 +4,13 @@
     ViewData["Title"] = "Car List";
 }
 
+@if (TempData["BookedCar"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["BookedCar"]
+    </div>
+}
+
 <h1>Car List</h1>
 
 <p>
