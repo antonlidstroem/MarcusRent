@@ -11,7 +11,7 @@
     </div>
 }
 
-<h1>Admin Dashboard</h1>
+<h1>Admin Dashboard . du är rätt</h1>
 
 <h2>Bilar</h2>
 <table class="table">
@@ -21,6 +21,8 @@
             <th>Modell</th>
             <th>Tillgänglig</th>
             <th>Pris per dag</th>
+            <th>Uthyrd till</th>
+            <th>Slutdatum</th>
             <th></th>
         </tr>
     </thead>
@@ -32,6 +34,8 @@
                 <td>@car.Model</td>
                 <td>@(car.Available ? "Ja" : "Nej")</td>
                 <td>@car.PricePerDay kr</td>
+                <td>@car.CurrentCustomerName</td>
+                <td>@(car.CurrentRentalEndDate?.ToShortDateString() ?? "-")</td>
                 <td>
                     <a asp-controller="Car" asp-action="Edit" asp-route-id="@car.CarId" class="btn btn-sm btn-warning">Edit</a>
 
@@ -45,6 +49,11 @@
         }
     </tbody>
 </table>
+
+<p>
+    <a asp-controller="Car" asp-action="Create" class="btn btn-primary">Create New Car</a>
+</p>
+
 
 <h2>Ordrar</h2>
 <table class="table">
@@ -66,6 +75,7 @@
                 <td>@order.CustomerName</td>
                 <td>@order.StartDate.ToShortDateString()</td>
                 <td>@order.EndDate.ToShortDateString()</td>
+
             </tr>
         }
     </tbody>

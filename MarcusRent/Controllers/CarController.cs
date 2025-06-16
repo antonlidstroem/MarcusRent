@@ -31,12 +31,16 @@ namespace MarcusRent.Controllers
         // GET: Car
         public async Task<IActionResult> Index()
         {
-            var cars = await _carRepository.GetAllAsync();
+            var availableCars = await _carRepository.GetAllAvailable()
+                .Where(c => c.Available)
+                .ToListAsync();
 
-            var model = _mapper.Map<List<CarViewModel>>(cars);
+            var model = _mapper.Map<List<CarViewModel>>(availableCars);
 
             return View(model);
         }
+
+
 
 
         // GET: Car/Details/5
@@ -59,16 +63,6 @@ namespace MarcusRent.Controllers
         {
             return View();
         }
-
-
-
-
-
-
-
-
-
-
 
 
         // POST: Car/Create
@@ -101,7 +95,7 @@ namespace MarcusRent.Controllers
 
             await _carRepository.AddAsync(car);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Admin");
         }
 
         // GET: Car/Edit/5

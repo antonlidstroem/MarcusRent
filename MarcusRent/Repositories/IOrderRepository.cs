@@ -14,6 +14,8 @@ namespace MarcusRental2.Repositories
         Task DeleteOrderAsync(int id);
         Task<bool> IsCarBookedAsync(int carId, DateTime startDate, DateTime endDate);
         Task<bool> OrderExistsAsync(int id);
-        decimal GetTotalEarningsForCar(object id);
+        //decimal GetTotalEarningsForCar(object id);
+
+        Task<decimal> GetTotalEarningsForCarAsync(int id);
     }
 }

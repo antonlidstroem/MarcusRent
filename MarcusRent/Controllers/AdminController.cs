@@ -40,50 +40,25 @@ namespace MarcusRent.Controllers
             var orders = await _orderRepository.GetAllOrdersAsync();
             var users = await _userService.GetAllUsersAsync();
 
-            var carViewModels = cars.Select(car =>
+            // Map Car -> AdminCarViewModel
+            var carViewModels = _mapper.Map<List<AdminCarViewModel>>(cars);
+
+            foreach (var carVM in carViewModels)
             {
-
-                //var earnings = orders
-                // .Where(o => o.CarId == car.CarId)
-                //  .Sum(o => o.Price);
-
-                var earnings = _orderRepository.GetTotalEarningsForCar(car.CarId);
+                var earnings = await _orderRepository.GetTotalEarningsForCarAsync(carVM.CarId);
                 var activeRental = orders
-                    .FirstOrDefault(o => o.CarId == car.CarId && o.EndDate > DateTime.Now);
+                    .FirstOrDefault(o => o.CarId == carVM.CarId && o.EndDate > DateTime.Now);
 
-                return new AdminCarViewModel
-                {
-                    CarId = car.CarId,
-                    Brand = car.Brand,
-                    Model = car.Model,
-                    Year = car.Year,
-                    Available = car.Available,
-                    PricePerDay = car.PricePerDay,
-                    ImageUrls = car.CarImages?.Select(img => img.Url).ToList() ?? new(),
-                    TotalEarnings = earnings,
-                    CurrentRentalEndDate = activeRental?.EndDate,
-                    CurrentCustomerName = activeRental?.Customer?.FullName
-                };
-            }).ToList();
+                carVM.TotalEarnings = earnings;
+                carVM.CurrentRentalEndDate = activeRental?.EndDate;
+                carVM.CurrentCustomerName = activeRental?.Customer?.FullName;
+            }
 
-            var orderViewModels = orders.Select(o => new AdminOrderViewModel
-            {
-                OrderId = o.OrderId,
-                CarName = $"{o.Car.Brand} {o.Car.Model}",
-                CustomerName = o.Customer.FullName,
-                StartDate = o.StartDate,
-                EndDate = o.EndDate,
-                Price = o.Price,
-                ActiveOrder = o.EndDate > DateTime.Now
-            }).ToList();
+            // Map Order -> AdminOrderViewModel
+            var orderViewModels = _mapper.Map<List<AdminOrderViewModel>>(orders);
 
-            var customerViewModels = users.Select(u => new AdminCustomerViewModel
-            {
-                UserId = u.Id,
-                FullName = u.FullName,
-                Email = u.Email,
-                ApprovedByAdmin = u.ApprovedByAdmin
-            }).ToList();
+            // Map ApplicationUser -> AdminCustomerViewModel
+            var customerViewModels = _mapper.Map<List<AdminCustomerViewModel>>(users);
 
             var vm = new AdminDashboardViewModel
             {

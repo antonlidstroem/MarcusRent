@@ -59,7 +59,10 @@ public class CarRepository : ICarRepository
         return await _context.Cars.AnyAsync(c => c.CarId == id);
     }
 
-
+    public IQueryable<Car> GetAllAvailable()
+    {
+        return _context.Cars.AsQueryable();
+    }
 }
 
 
