@@ -1,7 +1,8 @@
 ﻿using MarcusRent.Classes;
 using MarcusRent.Data;
+using MarcusRent.Repositories;
+using MarcusRental2.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,10 @@ public class SeedData
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        var carRepository = serviceProvider.GetRequiredService<ICarRepository>();
+        var orderRepository = serviceProvider.GetRequiredService<IOrderRepository>();
+    
+
 
         // 1. Skapa roller
         string[] roles = { "Admin", "User" };
@@ -33,7 +37,15 @@ public class SeedData
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
         {
-            adminUser = new ApplicationUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+            adminUser = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true,
+                FirstName = "Admin",
+                LastName = "User",
+                ApprovedByAdmin = true
+            };
             var result = await userManager.CreateAsync(adminUser, adminPassword);
             if (result.Succeeded)
             {
@@ -52,7 +64,15 @@ public class SeedData
             var user = await userManager.FindByEmailAsync(userEmail);
             if (user == null)
             {
-                user = new ApplicationUser { UserName = userEmail, Email = userEmail, EmailConfirmed = true };
+                user = new ApplicationUser
+                {
+                    UserName = userEmail,
+                    Email = userEmail,
+                    EmailConfirmed = true,
+                    FirstName = $"User{i}",
+                    LastName = "Test",
+                    ApprovedByAdmin = true
+                };
                 var result = await userManager.CreateAsync(user, userPassword);
                 if (result.Succeeded)
                 {
@@ -62,8 +82,9 @@ public class SeedData
             users.Add(user);
         }
 
-        // 4. Skapa bilar
-        if (!context.Cars.Any())
+        // 4. Skapa bilar om inga finns
+        var existingCars = await carRepository.GetAllAsync();
+        if (!existingCars.Any())
         {
             var cars = new List<Car>
             {
@@ -104,15 +125,18 @@ public class SeedData
                 }
             };
 
-            context.Cars.AddRange(cars);
-            await context.SaveChangesAsync();
+            foreach (var car in cars)
+            {
+                await carRepository.AddAsync(car);
+            }
+
+            existingCars = await carRepository.GetAllAsync(); // Uppdatera listan efter att bilar lagts till
         }
 
-        // 5. Skapa ordrar
-        if (!context.Orders.Any())
+        // 5. Skapa ordrar om inga finns
+        var existingOrders = await orderRepository.GetAllOrdersAsync();
+        if (!existingOrders.Any())
         {
-            var Cars = await context.Cars.ToListAsync();
-
             var orders = new List<Order>
             {
                 new Order
@@ -121,9 +145,9 @@ public class SeedData
                     UserId = users[0].Id,
                     StartDate = DateTime.Today,
                     EndDate = DateTime.Today.AddDays(3),
-                    Price = Cars[0].PricePerDay * 3,
+                    Price = existingCars[0].PricePerDay * 3,
                     ActiveOrder = true,
-                    Car = Cars[0]
+                    Car = existingCars[0]
                 },
                 new Order
                 {
@@ -131,9 +155,9 @@ public class SeedData
                     UserId = users[1].Id,
                     StartDate = DateTime.Today.AddDays(-10),
                     EndDate = DateTime.Today.AddDays(-7),
-                    Price = Cars[2].PricePerDay * 3,
+                    Price = existingCars[2].PricePerDay * 3,
                     ActiveOrder = false,
-                    Car = Cars[2]
+                    Car = existingCars[2]
                 },
                 new Order
                 {
@@ -141,9 +165,9 @@ public class SeedData
                     UserId = users[2].Id,
                     StartDate = DateTime.Today.AddDays(5),
                     EndDate = DateTime.Today.AddDays(10),
-                    Price = Cars[3].PricePerDay * 5,
+                    Price = existingCars[3].PricePerDay * 5,
                     ActiveOrder = true,
-                    Car = Cars[3]
+                    Car = existingCars[3]
                 },
                 new Order
                 {
@@ -151,9 +175,9 @@ public class SeedData
                     UserId = users[0].Id,
                     StartDate = DateTime.Today.AddDays(-3),
                     EndDate = DateTime.Today,
-                    Price = Cars[1].PricePerDay * 3,
+                    Price = existingCars[1].PricePerDay * 3,
                     ActiveOrder = false,
-                    Car = Cars[1]
+                    Car = existingCars[1]
                 },
                 new Order
                 {
@@ -161,14 +185,16 @@ public class SeedData
                     UserId = users[1].Id,
                     StartDate = DateTime.Today.AddDays(1),
                     EndDate = DateTime.Today.AddDays(4),
-                    Price = Cars[4].PricePerDay * 3,
+                    Price = existingCars[4].PricePerDay * 3,
                     ActiveOrder = true,
-                    Car = Cars[4]
+                    Car = existingCars[4]
                 }
             };
 
-            context.Orders.AddRange(orders);
-            await context.SaveChangesAsync();
+            foreach (var order in orders)
+            {
+                await orderRepository.AddOrderAsync(order);
+            }
         }
     }
 }
