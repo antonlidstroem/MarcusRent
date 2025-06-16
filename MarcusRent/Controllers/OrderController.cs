@@ -12,106 +12,64 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using static NuGet.Packaging.PackagingConstants;
+using MarcusRent.Repositories;
+using MarcusRental2.Repositories;
 
 namespace MarcusRent.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IOrderRepository _orderRepository;
+        private readonly ICarRepository _carRepository;
 
-        public OrderController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IMapper mapper)
+
+        public OrderController(UserManager<ApplicationUser> userManager, IMapper mapper, IOrderRepository orderRepository, ICarRepository carRepository)
         {
-            _context = context;
+            //_context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _orderRepository = orderRepository;
+            _carRepository = carRepository;
         }
 
-
-
-
-
-
-
-
         //GET: Order
-      
-           public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
-            var orders = await _context.Orders
-                .Include(o => o.Customer)  // Hämtar med kundinfo
-                .Include(c => c.Car)
-                .ToListAsync();
-
+            var orders = await _orderRepository.GetAllOrdersAsync();
             var model = _mapper.Map<List<OrderViewModel>>(orders);
             return View(model);
         }
 
-
-
-
-
-
-
-
-
         // GET: Order/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            var order = await _context.Orders
-                .FirstOrDefaultAsync(o => o.OrderId == id);
+            if (id == null) return NotFound();
 
-
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var order = await _orderRepository.GetOrderByIdAsync(id.Value);
+            if (order == null) return NotFound();
 
             return View(order);
-
-
         }
 
-        // GET: Order/Create?carId=123
-        //[Authorize]
-        public IActionResult Create(int carId)
+        // GET: Order/Create
+        public async Task<IActionResult> Create()
         {
-            if (!User.Identity.IsAuthenticated || User.Identity == null)
-            {
-                TempData["Message"] = "Du måste vara inloggad för att boka en bil.";
-                return RedirectToPage("/Account/Login", new { area = "Identity", returnUrl = $"/Order/Create?carId={carId}" });
-            }
-
-
-            var car = _context.Cars.FirstOrDefault(c => c.CarId == carId);
-            if (car == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year}) \n\n {car.PricePerDay} kr/dag";
-            ViewBag.PricePerDay = car.PricePerDay;
+            var cars = await _carRepository.GetAllAsync();
 
             var viewModel = new OrderViewModel
             {
-                StartDate = DateTime.Today,
-                EndDate = DateTime.Today.AddDays(1),
-                CarId = car.CarId,
-                //Description = $"{car.Brand} {car.Model} ({car.Year})"
-
+                Cars = cars.Select(c => new SelectListItem
+                {
+                    Value = c.CarId.ToString(),
+                    Text = c.Brand + " " + c.Model
+                }).ToList()
             };
 
-            
             return View(viewModel);
         }
-
-
-
-
-
-
-
 
 
 
@@ -120,54 +78,42 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderViewModel viewModel)
         {
-
-
             DebugHelper.DebugModelStatePostCreate(ModelState);
 
             if (!ModelState.IsValid)
             {
-                viewModel.Cars = _context.Cars
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.CarId.ToString(),
-                        Text = c.Brand + " " + c.Model
-                    }).ToList();
-
+                var cars = await _carRepository.GetAllAsync();
+                viewModel.Cars = cars.Select(c => new SelectListItem
+                {
+                    Value = c.CarId.ToString(),
+                    Text = c.Brand + " " + c.Model
+                }).ToList();
                 return View(viewModel);
             }
 
-            // Kontrollera om bilen redan är bokad under perioden
-            bool isBooked = await _context.Orders.AnyAsync(o =>
-                o.CarId == viewModel.CarId &&
-                o.StartDate < viewModel.EndDate &&
-                viewModel.StartDate < o.EndDate);
-
+            var isBooked = await _orderRepository.IsCarBookedAsync(viewModel.CarId, viewModel.StartDate, viewModel.EndDate);
             if (isBooked)
             {
                 ModelState.AddModelError("", "Den här bilen är redan bokad under den valda perioden.");
-                viewModel.Cars = _context.Cars
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.CarId.ToString(),
-                        Text = c.Brand + " " + c.Model
-                    }).ToList();
-
+                var cars = await _carRepository.GetAllAsync();
+                viewModel.Cars = cars.Select(c => new SelectListItem
+                {
+                    Value = c.CarId.ToString(),
+                    Text = c.Brand + " " + c.Model
+                }).ToList();
                 return View(viewModel);
             }
 
             var order = _mapper.Map<Order>(viewModel);
             order.UserId = _userManager.GetUserId(User);
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            await _orderRepository.AddOrderAsync(order);
 
             return RedirectToAction(nameof(Index));
         }
 
 
-
-
-
+        // GET: Order/Edit/5
         // GET: Order/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -176,13 +122,27 @@ namespace MarcusRent.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _orderRepository.GetOrderByIdAsync(id.Value);
             if (order == null)
             {
                 return NotFound();
             }
-            return View(order);
+
+            // Mappa till ViewModel
+            var viewModel = _mapper.Map<OrderViewModel>(order);
+
+            // Fyll dropdown med bilar
+            var cars = await _carRepository.GetAllAsync();
+            viewModel.Cars = cars.Select(c => new SelectListItem
+            {
+                Value = c.CarId.ToString(),
+                Text = $"{c.Brand} {c.Model}"
+            }).ToList();
+
+            return View(viewModel);
         }
+
+
 
         // POST: Order/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -200,12 +160,11 @@ namespace MarcusRent.Controllers
             {
                 try
                 {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
+                    await _orderRepository.UpdateOrderAsync(order);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrderExists(order.OrderId))
+                    if (!await _orderRepository.OrderExistsAsync(order.OrderId))
                     {
                         return NotFound();
                     }
@@ -227,8 +186,9 @@ namespace MarcusRent.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders
-                .FirstOrDefaultAsync(m => m.OrderId == id);
+
+            var order = await _orderRepository.GetOrderByIdAsync(id.Value);
+
             if (order == null)
             {
                 return NotFound();
@@ -242,25 +202,21 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _orderRepository.GetOrderByIdAsync(id);
             if (order != null)
             {
-                _context.Orders.Remove(order);
+                await _orderRepository.DeleteOrderAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrderExists(int id)
-        {
-            return _context.Orders.Any(e => e.OrderId == id);
-        }
+     
 
-
-       
+        //private async Task<bool> OrderExists(int id)
+        //{
+        //    return await _orderRepository.OrderExistsAsync(id);
+        //}
 
     }
-
-
 }

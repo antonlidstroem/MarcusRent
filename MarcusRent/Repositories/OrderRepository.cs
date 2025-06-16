@@ -14,14 +14,23 @@ namespace MarcusRental2.Repositories
             _context = context;
         }
 
+       
+
+
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            return await _context.Orders.ToListAsync();
+            return await _context.Orders
+                .Include(o => o.Car)
+                .Include(o => o.Customer)
+                .ToListAsync();
         }
 
         public async Task<Order?> GetOrderByIdAsync(int id)
         {
-            return await _context.Orders.FindAsync(id);
+            return await _context.Orders
+                .Include(o => o.Car)
+                .Include(o => o.Customer)
+                .FirstOrDefaultAsync(o => o.OrderId == id);
         }
 
         public async Task AddOrderAsync(Order order)
@@ -45,5 +54,28 @@ namespace MarcusRental2.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<bool> IsCarBookedAsync(int carId, DateTime startDate, DateTime endDate)
+        {
+            return await _context.Orders.AnyAsync(o =>
+                o.CarId == carId &&
+                o.StartDate < endDate &&
+                startDate < o.EndDate);
+        }
+
+        public async Task<bool> OrderExistsAsync(int id)
+        {
+            return await _context.Orders.AnyAsync(o => o.OrderId == id);
+        }
+
+
+
+
     }
 }
+
+
+
+
+
+

@@ -12,5 +12,10 @@ namespace MarcusRental2.Repositories
         Task AddOrderAsync(Order order);
         Task UpdateOrderAsync(Order order);
         Task DeleteOrderAsync(int id);
+        Task<bool> IsCarBookedAsync(int carId, DateTime startDate, DateTime endDate);
+        Task<bool> OrderExistsAsync(int id);
+
+
+
     }
 }
