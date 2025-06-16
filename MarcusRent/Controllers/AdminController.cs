@@ -43,11 +43,11 @@ namespace MarcusRent.Controllers
             var carViewModels = cars.Select(car =>
             {
 
-                var earnings = orders
-                 .Where(o => o.CarId == car.CarId)
-                  .Sum(o => o.Price);
+                //var earnings = orders
+                // .Where(o => o.CarId == car.CarId)
+                //  .Sum(o => o.Price);
 
-                //var earnings = _orderRepository.GetTotalEarningsForCar(car.Id);
+                var earnings = _orderRepository.GetTotalEarningsForCar(car.CarId);
                 var activeRental = orders
                     .FirstOrDefault(o => o.CarId == car.CarId && o.EndDate > DateTime.Now);
 

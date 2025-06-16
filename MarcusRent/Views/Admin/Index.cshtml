@@ -27,15 +27,12 @@
                 <td>@car.PricePerDay kr</td>
                 <td>
                     <a asp-controller="Car" asp-action="Edit" asp-route-id="@car.CarId" class="btn btn-sm btn-warning">Edit</a>
-                    @* <a asp-controller="Car" asp-action="Delete" asp-route-id="@car.CarId" class="btn btn-sm btn-danger">Delete</a> *@
 
-
-                    @* <button class="btn btn-danger" onclick="confirmDelete(@car.CarId)">Ta bort</button> *@
-                    <form id="deleteForm">@Html.AntiForgeryToken()</form>
-                    <button onclick="confirmDelete(@car.CarId)">Ta bort</button>
-
-
-
+                    <form asp-controller="Car" asp-action="DeleteConfirmed" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@car.CarId" />
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna bil?');">Ta bort</button>
+                    </form>
                 </td>
             </tr>
         }

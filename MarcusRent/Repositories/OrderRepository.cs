@@ -68,8 +68,15 @@ namespace MarcusRental2.Repositories
             return await _context.Orders.AnyAsync(o => o.OrderId == id);
         }
 
+        
+        public decimal GetTotalEarningsForCar(object id)
+        {
+            int carId = Convert.ToInt32(id);
 
-
+            return _context.Orders
+                .Where(o => o.CarId == carId)
+                .Sum(o => o.Price);
+        }
 
     }
 }

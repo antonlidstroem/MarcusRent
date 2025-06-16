@@ -11,8 +11,10 @@ namespace MarcusRent.Data
         {
             // Car <-> CarViewModel
             CreateMap<Car, CarViewModel>()
-                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.CarImages.Select(ci => ci.Url)))
-                .ReverseMap();
+                .ForMember(dest => dest.ImageUrls, 
+                opt => opt.MapFrom(src => src.CarImages
+                .Select(ci => ci.Url)));
+                //.ReverseMap();
 
 
             CreateMap<CarViewModel, Car>()
