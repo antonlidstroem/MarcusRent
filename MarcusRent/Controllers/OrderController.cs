@@ -69,19 +69,108 @@ namespace MarcusRent.Controllers
             //ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
             //ViewBag.PricePerDay = car.PricePerDay;
 
-           
+
 
 
             var viewModel = new OrderViewModel
             {
                 CarId = car.CarId,
-                Price = car.PricePerDay
+                Price = car.PricePerDay,
+                Brand = car.Brand,
+                Model = car.Model,
+               
 
             };
 
             ViewBag.PricePerDay = car.PricePerDay;
             ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
 
+            return View(viewModel);
+        }
+
+
+
+        ////[Authorize]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create(OrderViewModel viewModel)
+        //{
+        //    DebugHelper.DebugModelStatePostCreate(ModelState);
+
+        //    if (!ModelState.IsValid)
+        //    {
+        //        var cars = await _carRepository.GetAllAsync();
+        //        viewModel.Cars = cars.Select(c => new SelectListItem
+        //        {
+        //            Value = c.CarId.ToString(),
+        //            Text = c.Brand + " " + c.Model
+        //        }).ToList();
+        //        return View(viewModel);
+        //    }
+
+        //    var isBooked = await _orderRepository.IsCarBookedAsync(viewModel.CarId, viewModel.StartDate, viewModel.EndDate);
+        //    if (isBooked)
+        //    {
+        //        ModelState.AddModelError("", "Den här bilen är redan bokad under den valda perioden.");
+        //        var cars = await _carRepository.GetAllAsync();
+        //        viewModel.Cars = cars.Select(c => new SelectListItem
+        //        {
+        //            Value = c.CarId.ToString(),
+        //            Text = c.Brand + " " + c.Model
+        //        }).ToList();
+        //        return View(viewModel);
+        //    }
+
+
+        //    var car = await _carRepository.GetByIdAsync(viewModel.CarId);
+        //    var days = (viewModel.EndDate - viewModel.StartDate).TotalDays;
+        //    viewModel.Price = (decimal)days * car.PricePerDay;
+
+
+
+
+
+
+        //    var order = _mapper.Map<Order>(viewModel);
+        //    order.UserId = _userManager.GetUserId(User);
+
+        //    await _orderRepository.AddOrderAsync(order);
+
+        //    TempData["BookedCar"] = "Du har nu bokat bilen!";
+
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(OrderViewModel viewModel)
+        {
+
+            DebugHelper.DebugModelStatePostCreate(ModelState);
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                var order = new Order
+                {
+                    CarId = viewModel.CarId,
+                    StartDate = viewModel.StartDate,
+                    EndDate = viewModel.EndDate,
+                    Price = viewModel.Price,
+                    ActiveOrder = true,
+                    UserId = user.Id
+                };
+
+                await _orderRepository.AddOrderAsync(order);
+               
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Fyll ev. ViewBag-data igen
             return View(viewModel);
         }
 
@@ -95,95 +184,6 @@ namespace MarcusRent.Controllers
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //[Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(OrderViewModel viewModel)
-        {
-            DebugHelper.DebugModelStatePostCreate(ModelState);
-
-            if (!ModelState.IsValid)
-            {
-                var cars = await _carRepository.GetAllAsync();
-                viewModel.Cars = cars.Select(c => new SelectListItem
-                {
-                    Value = c.CarId.ToString(),
-                    Text = c.Brand + " " + c.Model
-                }).ToList();
-                return View(viewModel);
-            }
-
-
-    
-
-
-
-
-
-            var isBooked = await _orderRepository.IsCarBookedAsync(viewModel.CarId, viewModel.StartDate, viewModel.EndDate);
-            if (isBooked)
-            {
-                ModelState.AddModelError("", "Den här bilen är redan bokad under den valda perioden.");
-                var cars = await _carRepository.GetAllAsync();
-                viewModel.Cars = cars.Select(c => new SelectListItem
-                {
-                    Value = c.CarId.ToString(),
-                    Text = c.Brand + " " + c.Model
-                }).ToList();
-                return View(viewModel);
-            }
-
-
-            var car = await _carRepository.GetByIdAsync(viewModel.CarId);
-            var days = (viewModel.EndDate - viewModel.StartDate).TotalDays;
-            viewModel.Price = (decimal)days * car.PricePerDay;
-
-
-
-            var order = _mapper.Map<Order>(viewModel);
-            order.UserId = _userManager.GetUserId(User);
-
-            await _orderRepository.AddOrderAsync(order);
-
-            TempData["BookedCar"] = "Du har nu bokat bilen!";
-
-            return RedirectToAction(nameof(Index));
-        }
-
-
-
-
-
-        // GET: Order/Edit/5
         // GET: Order/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -229,7 +229,7 @@ namespace MarcusRent.Controllers
 
             var order = await _orderRepository.GetOrderByIdAsync(viewModel.OrderId);
             //var car = await _carRepository.GetByIdAsync(viewModel.CarId);
-         
+
 
             if (order == null)
             {

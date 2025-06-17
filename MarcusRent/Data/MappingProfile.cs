@@ -54,6 +54,10 @@ namespace MarcusRent.Data
             CreateMap<ApplicationUser, CustomerViewModel>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.UserName)); // Ändra om du har ett FullName-fält
 
+
+            CreateMap<ApplicationUser, OrderViewModel>()
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
+
         }
     }
 }
