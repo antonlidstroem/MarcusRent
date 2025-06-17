@@ -89,38 +89,38 @@ public class SeedData
             var cars = new List<Car>
             {
                 new Car {
-                    Brand = "Volvo", Model = "XC60", Year = 2020, PricePerDay = 800, Available = true,
+                    Brand = "Bond", Model = "Bug", Year = 1970, PricePerDay = 800, Available = true,
                     CarImages = new List<CarImage> {
-                        new CarImage { Url = "https://example.com/images/volvo-xc60-1.jpg" },
-                        new CarImage { Url = "https://example.com/images/volvo-xc60-2.jpg" }
+                        new CarImage { Url = "https://silodrome.com/wp-content/uploads/2015/05/Bond-Bug-1.jpg" },
+                        new CarImage { Url = "https://silodrome.com/wp-content/uploads/2015/05/Bond-Bug-6.jpg" }
                     }
                 },
                 new Car {
-                    Brand = "Tesla", Model = "Model 3", Year = 2022, PricePerDay = 1200, Available = true,
+                    Brand = "Volkswagen", Model = "Type 181", Year = 1968, PricePerDay = 1200, Available = true,
                     CarImages = new List<CarImage> {
-                        new CarImage { Url = "https://example.com/images/tesla-model3-1.jpg" },
-                        new CarImage { Url = "https://example.com/images/tesla-model3-2.jpg" }
+                        new CarImage { Url = "https://vochomania.mx/wp-content/uploads/2021/01/5d03cceb052ed_AMARILLO_3.jpg" },
+                        new CarImage { Url = "https://dealeraccelerate-all.s3.amazonaws.com/ideal/images/3/8/7/387/1922c9af07d9_hd_1973-volkswagen-thing.jpg" }
                     }
                 },
                 new Car {
-                    Brand = "BMW", Model = "i3", Year = 2019, PricePerDay = 750, Available = true,
+                    Brand = "Nissan", Model = "S Cargo", Year = 1989, PricePerDay = 750, Available = true,
                     CarImages = new List<CarImage> {
-                        new CarImage { Url = "https://example.com/images/bmw-i3-1.jpg" },
-                        new CarImage { Url = "https://example.com/images/bmw-i3-2.jpg" }
+                        new CarImage { Url = "https://images.honestjohn.co.uk/imagecache/file/crop/1200x800/media/6347067/Nissan~S-Cargo~(1).jpg" },
+                        new CarImage { Url = "https://static1.hotcarsimages.com/wordpress/wp-content/uploads/2022/12/sp00400013.jpg" }
                     }
                 },
                 new Car {
-                    Brand = "Volkswagen", Model = "Golf", Year = 2021, PricePerDay = 600, Available = true,
+                    Brand = "Fiat", Model = "600 Multipla", Year = 1956, PricePerDay = 600, Available = true,
                     CarImages = new List<CarImage> {
-                        new CarImage { Url = "https://example.com/images/vw-golf-1.jpg" },
-                        new CarImage { Url = "https://example.com/images/vw-golf-2.jpg" }
+                        new CarImage { Url = "https://stuartparrclassics.com/wp-content/uploads/2018/12/C_04_sRGB_3000x2000-1800x1198.jpg" },
+                        new CarImage { Url = "https://stuartparrclassics.com/wp-content/uploads/2018/12/C_05_sRGB_3000x2000-1200x798.jpg" }
                     }
                 },
                 new Car {
-                    Brand = "Toyota", Model = "Corolla", Year = 2018, PricePerDay = 500, Available = true,
+                    Brand = "Corbin", Model = "Sparrow", Year = 1999, PricePerDay = 500, Available = true,
                     CarImages = new List<CarImage> {
-                        new CarImage { Url = "https://example.com/images/toyota-corolla-1.jpg" },
-                        new CarImage { Url = "https://example.com/images/toyota-corolla-2.jpg" }
+                        new CarImage { Url = "https://assets.rebelmouse.io/media-library/color-image-of-a-corbin-sparrow-parked-in-a-profile-position-at-the-rambler-ranch-in-colorado.jpg?id=31856449&width=980" },
+                        new CarImage { Url = "https://www.planetcarsz.com/assets/uploads/images/VEICULOS/C/CORBIN/2000_CORBIN_SPARROW_EV/CORBIN_SPARROW_EV_2000_01.jpg" }
                     }
                 }
             };
