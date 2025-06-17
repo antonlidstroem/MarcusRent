@@ -34,6 +34,13 @@
 				<td>@Html.DisplayFor(modelItem => item.Price)</td>
 				<td>@Html.DisplayFor(modelItem => item.ActiveOrder)</td>
 				<td>
+				<form asp-controller="Order" asp-action="DeleteConfirmed" method="post" style="display:inline;">
+					@Html.AntiForgeryToken()
+					<input type="hidden" name="id" value="@item.OrderId" />
+					<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
+				</form>
+				</td>
+				<td>
 					@* <a asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-sm btn-warning">Ändra</a>
 					<a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-sm btn-info">Detaljer</a>
 					<a asp-action="Delete" asp-route-id="@item.OrderId" class="btn btn-sm btn-danger">Ta bort</a> *@

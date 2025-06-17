@@ -104,6 +104,8 @@
         <tr>
             <th>Namn</th>
             <th>Email</th>
+            <th>Approved</th>
+
         </tr>
     </thead>
     <tbody>
@@ -112,6 +114,19 @@
             <tr>
                 <td>@customer.FullName</td>
                 <td>@customer.Email</td>
+                <td><input type="checkbox" disabled @(customer.ApprovedByAdmin ? "checked" : "") /></td>
+
+                <a asp-controller="Order" asp-action="Edit" asp-route-id="@customer.UserId" class="btn btn-sm btn-warning">Edit</a>
+
+                <form asp-controller="" asp-action="DeleteConfirmed" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@customer.UserId" />
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
+                </form>
+               
+
+
+
             </tr>
         }
     </tbody>

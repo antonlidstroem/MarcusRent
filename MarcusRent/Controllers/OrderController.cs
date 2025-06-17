@@ -66,28 +66,23 @@ namespace MarcusRent.Controllers
                 return NotFound();
             }
 
-            //ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
-            //ViewBag.PricePerDay = car.PricePerDay;
-
-
-
-
             var viewModel = new OrderViewModel
             {
                 CarId = car.CarId,
                 Price = car.PricePerDay,
                 Brand = car.Brand,
                 Model = car.Model,
-
-
             };
+
+
+
+           
 
             ViewBag.PricePerDay = car.PricePerDay;
             ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
 
             return View(viewModel);
         }
-
 
 
         ////[Authorize]
@@ -155,6 +150,11 @@ namespace MarcusRent.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
 
+                if (viewModel.StartDate >= viewModel.EndDate)
+                {
+                    TempData["TempData"] = "Slutdatum måste vara efter startdatum.";
+                    return View(viewModel);
+                }
 
                 var isBooked = await _orderRepository.IsCarBookedAsync(viewModel.CarId, viewModel.StartDate, viewModel.EndDate);
                 if (isBooked)
@@ -273,6 +273,7 @@ namespace MarcusRent.Controllers
                 try
                 {
                     await _orderRepository.UpdateOrderAsync(order);
+                    TempData["TempData"] = "Ordern har uppdaterats";
                 }
                 catch (DbUpdateConcurrencyException)
                 {

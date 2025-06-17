@@ -37,7 +37,7 @@ namespace MarcusRent.Models
         public string CarName { get; set; } = "";
         public string CustomerName { get; set; } = "";
 
-        public IEnumerable<SelectListItem>? Users { get; set; }
+        
 
     }
 }
