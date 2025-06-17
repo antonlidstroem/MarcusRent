@@ -11,6 +11,13 @@
     </div>
 }
 
+@if (TempData["TempData"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["TempData"]
+    </div>
+}
+
 <h1>Admin Dashboard . du är rätt</h1>
 
 <h2>Bilar</h2>

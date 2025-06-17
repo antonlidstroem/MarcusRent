@@ -78,7 +78,7 @@ namespace MarcusRent.Controllers
                 Price = car.PricePerDay,
                 Brand = car.Brand,
                 Model = car.Model,
-               
+
 
             };
 
@@ -155,19 +155,36 @@ namespace MarcusRent.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
 
-                var order = new Order
-                {
-                    CarId = viewModel.CarId,
-                    StartDate = viewModel.StartDate,
-                    EndDate = viewModel.EndDate,
-                    Price = viewModel.Price,
-                    ActiveOrder = true,
-                    UserId = user.Id
-                };
 
-                await _orderRepository.AddOrderAsync(order);
-               
-                return RedirectToAction(nameof(Index));
+                var isBooked = await _orderRepository.IsCarBookedAsync(viewModel.CarId, viewModel.StartDate, viewModel.EndDate);
+                if (isBooked)
+                {
+                    TempData["TempData"] = "Bilen är tyvärr upptagen under denna tidsperiod.";
+                }
+                else
+                {
+                    var order = new Order
+                    {
+                        CarId = viewModel.CarId,
+                        StartDate = viewModel.StartDate,
+                        EndDate = viewModel.EndDate,
+                        Price = viewModel.Price,
+                        ActiveOrder = true,
+                        UserId = user.Id
+                    };
+
+                    await _orderRepository.AddOrderAsync(order);
+                    TempData["TempData"] = "Du har nu bokat bilen!";
+                }
+
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Car");
+                }
             }
 
             // Fyll ev. ViewBag-data igen
