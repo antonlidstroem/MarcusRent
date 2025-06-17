@@ -229,45 +229,48 @@ namespace MarcusRent.Controllers
 
 
 
-        // GET: Order/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// GET: Order/Delete/5
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
 
-            var order = await _orderRepository.GetOrderByIdAsync(id.Value);
+        //    var order = await _orderRepository.GetOrderByIdAsync(id.Value);
 
-            if (order == null)
-            {
-                return NotFound();
-            }
+        //    if (order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(order);
-        }
+        //    return View(order);
+        //}
 
         // POST: Order/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
+
+            if (order == null)
+                return NotFound();
+
             if (order != null)
-            {
-                await _orderRepository.DeleteOrderAsync(id);
-            }
+                try
+                {
+                    await _orderRepository.DeleteOrderAsync(id);
+                    return RedirectToAction("Index", "Admin");
+
+                }
+                catch (DbUpdateException)
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
 
             return RedirectToAction(nameof(Index));
         }
-
-     
-
-        //private async Task<bool> OrderExists(int id)
-        //{
-        //    return await _orderRepository.OrderExistsAsync(id);
-        //}
-
     }
 }

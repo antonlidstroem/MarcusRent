@@ -55,6 +55,10 @@ namespace MarcusRental2.Repositories
             }
         }
 
+
+
+
+
         public async Task<bool> IsCarBookedAsync(int carId, DateTime startDate, DateTime endDate)
         {
             return await _context.Orders.AnyAsync(o =>

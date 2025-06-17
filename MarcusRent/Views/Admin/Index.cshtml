@@ -80,11 +80,11 @@
                 <td>
                     <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-warning">Edit</a>
 
-                    @* <form asp-controller="Car" asp-action="DeleteConfirmed" method="post" style="display:inline;">
+                    <form asp-controller="Order" asp-action="DeleteConfirmed" method="post" style="display:inline;">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@car.CarId" />
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna bil?');">Ta bort</button>
-                    </form> *@
+                        <input type="hidden" name="id" value="@order.OrderId" />
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
+                    </form>
                 </td>
             </tr>
         }
