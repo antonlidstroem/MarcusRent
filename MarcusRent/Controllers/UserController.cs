@@ -1,0 +1,85 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using MarcusRent.Classes;
+using Microsoft.EntityFrameworkCore;
+
+
+namespace MarcusRent.Controllers
+{
+    public class UserController : Controller
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public UserController(UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
+        // GET: Users/Edit/id
+        public async Task<IActionResult> Edit(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            return View(user); // skapa en vy för detta
+        }
+
+        // POST: Users/Edit/id
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, ApplicationUser updatedUser)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            user.FirstName = updatedUser.FirstName;
+            user.LastName = updatedUser.LastName;
+            user.Email = updatedUser.Email;
+            user.UserName = updatedUser.Email; 
+            user.ApprovedByAdmin = updatedUser.ApprovedByAdmin;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+                return RedirectToAction("Index", "Admin");
+
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+
+            return View(user);
+        }
+
+        // POST: Users/DeleteConfirmed
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "ID saknas!";
+                return RedirectToAction("Index", "Admin");
+            }
+
+            // Hämta användaren med userId (inte e-post)
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = $"Ingen användare med id {userId} hittades.";
+                return RedirectToAction("Index", "Admin");
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                TempData["ErrorMessage"] = "Det gick inte att ta bort användaren.";
+                return RedirectToAction("Index", "Admin");
+            }
+
+            TempData["TempData"] = "Användaren har nu tagits bort!";
+            return RedirectToAction("Index", "Admin");
+        }
+
+
+    }
+}
+
+

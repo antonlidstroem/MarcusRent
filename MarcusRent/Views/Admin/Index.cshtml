@@ -116,18 +116,28 @@
                 <td>@customer.Email</td>
                 <td><input type="checkbox" disabled @(customer.ApprovedByAdmin ? "checked" : "") /></td>
 
-                <a asp-controller="Order" asp-action="Edit" asp-route-id="@customer.UserId" class="btn btn-sm btn-warning">Edit</a>
+                <td>
+                <a asp-controller="User" asp-action="Edit" asp-route-id="@customer.UserId" class="btn btn-sm btn-warning">Edit</a>
 
-                <form asp-controller="" asp-action="DeleteConfirmed" method="post" style="display:inline;">
+                <form asp-controller="User" asp-action="DeleteConfirmed" method="post" style="display:inline;">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@customer.UserId" />
+                    <input type="hidden" name="userId" value="@customer.UserId" />
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
                 </form>
-               
+                </td>
+
+                <td>
+                <span> @customer.UserId</span>
+                </td>
+
+
+
 
 
 
             </tr>
+
+           
         }
     </tbody>
 </table>

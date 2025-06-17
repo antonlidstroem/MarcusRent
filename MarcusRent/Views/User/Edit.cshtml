@@ -1,0 +1,31 @@
+﻿@model MarcusRent.Classes.ApplicationUser
+
+<h2>Redigera användare</h2>
+
+<form asp-action="Edit">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="FirstName"></label>
+        <input asp-for="FirstName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LastName"></label>
+        <input asp-for="LastName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+
+    <div class="form-group form-check">
+        <input asp-for="ApprovedByAdmin" class="form-check-input" />
+        <label asp-for="ApprovedByAdmin" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Spara</button>
+    <a asp-action="Index" class="btn btn-secondary">Avbryt</a>
+</form>

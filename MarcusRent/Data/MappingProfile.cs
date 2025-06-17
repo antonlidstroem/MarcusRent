@@ -58,6 +58,12 @@ namespace MarcusRent.Data
             CreateMap<ApplicationUser, OrderViewModel>()
             .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
+            CreateMap<ApplicationUser, CustomerViewModel>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin));
+
         }
     }
 }

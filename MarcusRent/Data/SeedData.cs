@@ -133,7 +133,7 @@ public class SeedData
             existingCars = await carRepository.GetAllAsync(); // Uppdatera listan efter att bilar lagts till
         }
 
-        // 5. Skapa ordrar om inga finns
+        //5. Skapa ordrar om inga finns
         var existingOrders = await orderRepository.GetAllOrdersAsync();
         if (!existingOrders.Any())
         {
