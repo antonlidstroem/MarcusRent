@@ -11,7 +11,9 @@
 
 <h2>Boka bil</h2>
 
+
 <p>Bokar bil: @ViewBag.CarInfo</p>
+<p>@ViewBag.PricePerDay kr/dag</p>
 
 <form asp-action="Create" method="post">
     <input type="hidden" asp-for="CarId" />
@@ -27,6 +29,7 @@
         <input asp-for="EndDate" class="form-control" type="date" id="endDate" />
         <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
+
 
     <div class="form-group">
         <label>Pris</label>

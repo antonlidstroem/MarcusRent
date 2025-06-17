@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using static NuGet.Packaging.PackagingConstants;
 using MarcusRent.Repositories;
 using MarcusRental2.Repositories;
+using System.Runtime.ConstrainedExecution;
 
 namespace MarcusRent.Controllers
 {
@@ -55,18 +56,28 @@ namespace MarcusRent.Controllers
         }
 
         // GET: Order/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int carId)
         {
-            var cars = await _carRepository.GetAllAsync();
+            //var cars = await _carRepository.GetAllAsync();
+            var car = await _carRepository.GetByIdAsync(carId);
+
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            //ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
+            //ViewBag.PricePerDay = car.PricePerDay;
+
+           
+
 
             var viewModel = new OrderViewModel
             {
-                Cars = cars.Select(c => new SelectListItem
-                {
-                    Value = c.CarId.ToString(),
-                    Text = c.Brand + " " + c.Model
-                }).ToList()
+                CarId = carId,
+                Price = car.PricePerDay
             };
+
 
             return View(viewModel);
         }
@@ -106,6 +117,8 @@ namespace MarcusRent.Controllers
 
             var order = _mapper.Map<Order>(viewModel);
             order.UserId = _userManager.GetUserId(User);
+
+            
 
             await _orderRepository.AddOrderAsync(order);
 
@@ -151,14 +164,39 @@ namespace MarcusRent.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,StartDate,EndDate,Price,ActiveOrder")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,StartDate,EndDate,Price,CarId,ActiveOrder,Brand,Model,Year,CarName")] OrderViewModel viewModel)
         {
-            if (id != order.OrderId)
+            if (id != viewModel.OrderId || !ModelState.IsValid)
+            {
+                DebugHelper.DebugModelStatePostCreate(ModelState);
+                return View(viewModel);
+            }
+
+            var order = await _orderRepository.GetOrderByIdAsync(viewModel.OrderId);
+            //var car = await _carRepository.GetByIdAsync(viewModel.CarId);
+         
+
+            if (order == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var car = await _carRepository.GetByIdAsync(viewModel.CarId);
+
+            Console.WriteLine($"CarId from ViewModel: {viewModel.CarId}");
+
+
+            if (car == null)
+            {
+                ModelState.AddModelError("CarId", "Bilen kunde inte hittas.");
+                return View(viewModel);
+            }
+
+            _mapper.Map(viewModel, order);
+
+            // Sätt Car-objektet explicit efter mapping (för att undvika EF-tracking problem)
+            order.Car = car;
+
             {
                 try
                 {
@@ -166,7 +204,7 @@ namespace MarcusRent.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _orderRepository.OrderExistsAsync(order.OrderId))
+                    if (!await _orderRepository.OrderExistsAsync(viewModel.OrderId))
                     {
                         return NotFound();
                     }
@@ -175,10 +213,21 @@ namespace MarcusRent.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Admin");
             }
-            return View(order);
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
         // GET: Order/Delete/5
         public async Task<IActionResult> Delete(int? id)

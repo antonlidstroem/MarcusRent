@@ -1,4 +1,4 @@
-﻿@model MarcusRent.Classes.Order
+﻿@model MarcusRent.Models.OrderViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,6 +13,9 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="OrderId" />
+            <input type="hidden" asp-for="CarId" value="@Model.CarId"/>
+            <input type="hidden" asp-for="Brand" value="@Model.Brand" />
+            <input type="hidden" asp-for="Model" value="@Model.Model" />
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
                 <input asp-for="StartDate" class="form-control" />

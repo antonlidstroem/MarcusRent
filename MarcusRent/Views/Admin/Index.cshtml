@@ -64,6 +64,7 @@
             <th>Kund</th>
             <th>Startdatum</th>
             <th>Slutdatum</th>
+            <th>Summa</th>
         </tr>
     </thead>
     <tbody>
@@ -75,6 +76,16 @@
                 <td>@order.CustomerName</td>
                 <td>@order.StartDate.ToShortDateString()</td>
                 <td>@order.EndDate.ToShortDateString()</td>
+                <td>@order.Price</td>
+                <td>
+                    <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-warning">Edit</a>
+
+                    @* <form asp-controller="Car" asp-action="DeleteConfirmed" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@car.CarId" />
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna bil?');">Ta bort</button>
+                    </form> *@
+                </td>
             </tr>
         }
     </tbody>
