@@ -74,13 +74,53 @@ namespace MarcusRent.Controllers
 
             var viewModel = new OrderViewModel
             {
-                CarId = carId,
+                CarId = car.CarId,
                 Price = car.PricePerDay
+
             };
 
+            ViewBag.PricePerDay = car.PricePerDay;
+            ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
 
             return View(viewModel);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -89,7 +129,7 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderViewModel viewModel)
         {
-            //DebugHelper.DebugModelStatePostCreate(ModelState);
+            DebugHelper.DebugModelStatePostCreate(ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -101,6 +141,13 @@ namespace MarcusRent.Controllers
                 }).ToList();
                 return View(viewModel);
             }
+
+
+    
+
+
+
+
 
             var isBooked = await _orderRepository.IsCarBookedAsync(viewModel.CarId, viewModel.StartDate, viewModel.EndDate);
             if (isBooked)
@@ -115,10 +162,15 @@ namespace MarcusRent.Controllers
                 return View(viewModel);
             }
 
+
+            var car = await _carRepository.GetByIdAsync(viewModel.CarId);
+            var days = (viewModel.EndDate - viewModel.StartDate).TotalDays;
+            viewModel.Price = (decimal)days * car.PricePerDay;
+
+
+
             var order = _mapper.Map<Order>(viewModel);
             order.UserId = _userManager.GetUserId(User);
-
-            
 
             await _orderRepository.AddOrderAsync(order);
 
@@ -126,6 +178,9 @@ namespace MarcusRent.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+
 
 
         // GET: Order/Edit/5
