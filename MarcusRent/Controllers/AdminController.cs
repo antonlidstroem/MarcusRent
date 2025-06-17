@@ -41,7 +41,7 @@ namespace MarcusRent.Controllers
             var users = await _userService.GetAllUsersAsync();
 
             // Map Car -> AdminCarViewModel
-            var carViewModels = _mapper.Map<List<AdminCarViewModel>>(cars);
+            var carViewModels = _mapper.Map<List<CarViewModel>>(cars);
 
             foreach (var carVM in carViewModels)
             {
@@ -55,10 +55,10 @@ namespace MarcusRent.Controllers
             }
 
             // Map Order -> AdminOrderViewModel
-            var orderViewModels = _mapper.Map<List<AdminOrderViewModel>>(orders);
+            var orderViewModels = _mapper.Map<List<OrderViewModel>>(orders);
 
             // Map ApplicationUser -> AdminCustomerViewModel
-            var customerViewModels = _mapper.Map<List<AdminCustomerViewModel>>(users);
+            var customerViewModels = _mapper.Map<List<CustomerViewModel>>(users);
 
             var vm = new AdminDashboardViewModel
             {

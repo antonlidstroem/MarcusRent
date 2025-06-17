@@ -34,8 +34,16 @@ namespace MarcusRent.Models
         public string Model { get; set; }
         public int Year { get; set; }
 
+        public string CarName { get; set; } = "";
+        public string CustomerName { get; set; } = "";
+
     }
 }
+
+
+
+
+
 
 
 

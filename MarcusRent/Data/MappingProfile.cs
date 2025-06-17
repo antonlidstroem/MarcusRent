@@ -43,20 +43,20 @@ namespace MarcusRent.Data
 
 
             // AdminCarViewModel <-> Car
-            CreateMap<Car, AdminCarViewModel>()
+            CreateMap<Car, CarViewModel>()
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.CarImages.Select(ci => ci.Url)))
                 .ForMember(dest => dest.TotalEarnings, opt => opt.Ignore())
                 .ForMember(dest => dest.CurrentRentalEndDate, opt => opt.Ignore())
                 .ForMember(dest => dest.CurrentCustomerName, opt => opt.Ignore());
 
             // AdminOrderViewModel <-> Order
-            CreateMap<Order, AdminOrderViewModel>()
+            CreateMap<Order, OrderViewModel>()
                 .ForMember(dest => dest.CarName, opt => opt.MapFrom(src => $"{src.Car.Brand} {src.Car.Model}"))
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
                 .ForMember(dest => dest.ActiveOrder, opt => opt.MapFrom(src => src.EndDate > DateTime.Now));
 
             // ApplicationUser -> AdminCustomerViewModel
-            CreateMap<ApplicationUser, AdminCustomerViewModel>()
+            CreateMap<ApplicationUser, CustomerViewModel>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.UserName)); // Ändra om du har ett FullName-fält
 
         }

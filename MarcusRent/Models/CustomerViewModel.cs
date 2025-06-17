@@ -1,6 +1,6 @@
 ﻿namespace MarcusRent.Models
 {
-    public class AdminCustomerViewModel
+    public class CustomerViewModel
     {
         public string UserId { get; set; } = "";
         public string FullName { get; set; } = "";
