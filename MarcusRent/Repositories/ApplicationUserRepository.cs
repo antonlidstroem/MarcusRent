@@ -12,6 +12,43 @@ namespace MarcusRent.Repositories
             _userManager = userManager;
         }
 
+        public async Task<ApplicationUser?> AddAsync(string email, string password, string role)
+        {
+            var existingUser = await _userManager.FindByEmailAsync(email);
+
+            if (existingUser != null)
+            {
+                return null;
+            }
+
+            var newUser = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                ApprovedByAdmin = true
+            };
+
+            var result = await _userManager.CreateAsync(newUser, password);
+
+            if (!result.Succeeded)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(role))
+            {
+                var addToRoleResult = await _userManager.AddToRoleAsync(newUser, role);
+
+                if (!addToRoleResult.Succeeded)
+                {
+                    return null;
+                }
+            }
+
+            return newUser;
+        }
+
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
             return _userManager.Users.ToList();

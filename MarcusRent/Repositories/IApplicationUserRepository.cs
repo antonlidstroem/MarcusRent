@@ -12,6 +12,7 @@ namespace MarcusRent.Repositories
         Task ApproveUserAsync(string id);
         Task DeleteUserAsync(string id);
         Task UpdateUserAsync(ApplicationUser user);
+        Task<ApplicationUser?> AddAsync(string email, string password, string role);
     }
 }
     // 2. Implementera detta:
