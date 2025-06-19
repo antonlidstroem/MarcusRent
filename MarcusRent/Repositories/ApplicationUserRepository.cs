@@ -26,7 +26,9 @@ namespace MarcusRent.Repositories
                 UserName = email,
                 Email = email,
                 EmailConfirmed = true,
-                ApprovedByAdmin = true
+                ApprovedByAdmin = true,
+                FirstName = "Test",
+                LastName = "Användare"
             };
 
             var result = await _userManager.CreateAsync(newUser, password);

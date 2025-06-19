@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarcusRent.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250617191245_init")]
+    [Migration("20250619192956_init")]
     partial class init
     {
         /// <inheritdoc />
