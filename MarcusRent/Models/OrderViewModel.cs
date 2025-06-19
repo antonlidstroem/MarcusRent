@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MarcusRent.Classes;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -37,7 +38,7 @@ namespace MarcusRent.Models
         public string CarName { get; set; } = "";
         public string CustomerName { get; set; } = "";
 
-        
+        //public ApplicationUser User { get; set; }
 
     }
 }

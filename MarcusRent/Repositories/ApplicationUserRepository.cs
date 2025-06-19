@@ -3,24 +3,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MarcusRent.Repositories
 {
-    // 1. Skapa ett gränssnitt för Identity-användare som admin kan se och hantera:
-
-    public interface IApplicationUserService
-    {
-        Task<List<ApplicationUser>> GetAllUsersAsync();
-        Task<ApplicationUser?> GetUserByIdAsync(string id);
-        Task ApproveUserAsync(string id);
-        Task DeleteUserAsync(string id);
-        Task UpdateUserAsync(ApplicationUser user);
-    }
-
-    // 2. Implementera detta:
-
-    public class ApplicationUserService : IApplicationUserService
+    public class ApplicationUserRepository : IApplicationUserRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ApplicationUserService(UserManager<ApplicationUser> userManager)
+        public ApplicationUserRepository(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
@@ -61,3 +48,4 @@ namespace MarcusRent.Repositories
     }
 
 }
+

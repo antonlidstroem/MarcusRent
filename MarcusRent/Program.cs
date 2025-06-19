@@ -30,9 +30,9 @@ namespace MarcusRent
 
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-            builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
+            builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
-            
+
 
 
 

@@ -11,6 +11,7 @@ using MarcusRent.Models;
 using AutoMapper;
 using MarcusRent.Repositories;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MarcusRent.Controllers
 {
@@ -31,14 +32,21 @@ namespace MarcusRent.Controllers
         // GET: Car
         public async Task<IActionResult> Index()
         {
+            // Hämta alla tillgängliga bilar inklusive deras bilder
             var availableCars = await _carRepository.GetAllAvailable()
                 .Where(c => c.Available)
+                .Include(c => c.CarImages)  // Viktigt för att AutoMapper ska kunna mappa bilderna
                 .ToListAsync();
 
+            // Mappa från Car till CarViewModel inklusive ImageUrls
             var model = _mapper.Map<List<CarViewModel>>(availableCars);
 
             return View(model);
         }
+
+
+
+
 
 
 

@@ -1,27 +1,53 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    --color-fire-orange: #F57C00;
+    --color-dark-charcoal: #1C1C1C;
+    --color-light-gray: #E8E8E8;
+    --color-metallic-gray: #B0B0B0;
+    --color-soft-black: #2A2A2A;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--color-fire-orange);
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: var(--color-light-gray);
+    color: var(--color-fire-orange);
 }
 
+
+/*BILDKLASSER*/
 .image-gallery img {
     transition: opacity 2s ease-in-out;
     opacity: 1;
 }
+
+.image-bordered {
+    display: block;
+    width: 80vw; 
+    max-width: 600px;
+    height: auto; 
+    margin: 20px auto;
+    border: 2px solid var(--color-fire-orange);
+    border-radius: 8px;
+    padding: 4px;
+    background-color: white;
+}
+

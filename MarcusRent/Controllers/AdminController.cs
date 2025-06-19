@@ -19,13 +19,13 @@ namespace MarcusRent.Controllers
     {
         private readonly ICarRepository _carRepository;
         private readonly IOrderRepository _orderRepository;
-        private readonly IApplicationUserService _userService;
+        private readonly IApplicationUserRepository _userService;
         private readonly IMapper _mapper;
 
         public AdminController(
             ICarRepository carRepository,
             IOrderRepository orderRepository,
-            IApplicationUserService userService,
+            IApplicationUserRepository userService,
             IMapper mapper)
         {
             _carRepository = carRepository;

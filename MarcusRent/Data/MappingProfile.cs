@@ -64,6 +64,12 @@ namespace MarcusRent.Data
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin));
 
+
+
+            CreateMap<OrderViewModel, Order>()
+             .ForMember(dest => dest.Car, opt => opt.Ignore()) // Undvik att EF spårar ny bil
+              .ForMember(dest => dest.Customer, opt => opt.Ignore()) // Om Customer används
+              .ForMember(dest => dest.UserId, opt => opt.Ignore()); // UserId sätts manuellt
         }
     }
 }
