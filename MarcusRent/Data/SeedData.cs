@@ -1,4 +1,5 @@
-﻿using MarcusRent.Classes;
+﻿using AutoMapper;
+using MarcusRent.Classes;
 using MarcusRent.Data;
 using MarcusRent.Repositories;
 using MarcusRental2.Repositories;
@@ -10,17 +11,25 @@ using System.Threading.Tasks;
 
 public class SeedData
 {
+   
+
+
+ 
+
     public static async Task InitializeAsync(IServiceProvider serviceProvider)
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var carRepository = serviceProvider.GetRequiredService<ICarRepository>();
         var orderRepository = serviceProvider.GetRequiredService<IOrderRepository>();
-    
+        
+   
+
+        
 
 
-        // 1. Skapa roller
-        string[] roles = { "Admin", "User" };
+    // 1. Skapa roller
+    string[] roles = { "Admin", "User" };
 
         foreach (var role in roles)
         {
@@ -54,16 +63,21 @@ public class SeedData
         }
 
         // 3. Skapa vanliga användare
-        var users = new List<ApplicationUser>();
-        //if (!users.Any())
-        //{
+        //var users = new List<ApplicationUser>();
 
 
-            for (int i = 1; i <= 3; i++)
+
+
+        var users = await userManager.GetUserAsync();
+
+        for (int i = 1; i <= 3; i++)
+        {
+            var userEmail = $"user{i}@example.com";
+            var userPassword = $"User{i}123!";
+            var existingUser = await userManager.FindByEmailAsync(userEmail);
+
+            if (existingUser == null)
             {
-                var userEmail = $"user{i}@example.com";
-                var userPassword = $"User{i}123!";
-
                 var user = await userManager.FindByEmailAsync(userEmail);
                 if (user == null)
                 {
@@ -84,6 +98,8 @@ public class SeedData
                 }
                 users.Add(user);
             }
+
+        }
         //}
 
         // 4. Skapa bilar om inga finns
