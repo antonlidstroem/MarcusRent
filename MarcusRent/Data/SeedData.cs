@@ -55,32 +55,36 @@ public class SeedData
 
         // 3. Skapa vanliga användare
         var users = new List<ApplicationUser>();
+        //if (!users.Any())
+        //{
 
-        for (int i = 1; i <= 3; i++)
-        {
-            var userEmail = $"user{i}@example.com";
-            var userPassword = $"User{i}123!";
 
-            var user = await userManager.FindByEmailAsync(userEmail);
-            if (user == null)
+            for (int i = 1; i <= 3; i++)
             {
-                user = new ApplicationUser
+                var userEmail = $"user{i}@example.com";
+                var userPassword = $"User{i}123!";
+
+                var user = await userManager.FindByEmailAsync(userEmail);
+                if (user == null)
                 {
-                    UserName = userEmail,
-                    Email = userEmail,
-                    EmailConfirmed = true,
-                    FirstName = $"User{i}",
-                    LastName = "Test",
-                    ApprovedByAdmin = true
-                };
-                var result = await userManager.CreateAsync(user, userPassword);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(user, "User");
+                    user = new ApplicationUser
+                    {
+                        UserName = userEmail,
+                        Email = userEmail,
+                        EmailConfirmed = true,
+                        FirstName = $"User{i}",
+                        LastName = "Test",
+                        ApprovedByAdmin = true
+                    };
+                    var result = await userManager.CreateAsync(user, userPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, "User");
+                    }
                 }
+                users.Add(user);
             }
-            users.Add(user);
-        }
+        //}
 
         // 4. Skapa bilar om inga finns
         var existingCars = await carRepository.GetAllAsync();

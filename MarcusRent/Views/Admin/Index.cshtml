@@ -44,12 +44,12 @@
                 <td>@car.CurrentCustomerName</td>
                 <td>@(car.CurrentRentalEndDate?.ToShortDateString() ?? "-")</td>
                 <td>
-                    <a asp-controller="Car" asp-action="Edit" asp-route-id="@car.CarId" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-controller="Car" asp-action="Edit" asp-route-id="@car.CarId" class="btn custom-btn">Edit</a>
 
                     <form asp-controller="Car" asp-action="DeleteConfirmed" method="post" style="display:inline;">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@car.CarId" />
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna bil?');">Ta bort</button>
+                        <button type="submit" class="btn custom-btn" onclick="return confirm('Är du säker på att du vill ta bort denna bil?');">Ta bort</button>
                     </form>
                 </td>
             </tr>
@@ -58,7 +58,7 @@
 </table>
 
 <p>
-    <a asp-controller="Car" asp-action="Create" class="btn btn-primary">Create New Car</a>
+    <a asp-controller="Car" asp-action="Create" class="btn custom-btn">Create New Car</a>
 </p>
 
 
@@ -85,12 +85,12 @@
                 <td>@order.EndDate.ToShortDateString()</td>
                 <td>@order.Price</td>
                 <td>
-                    <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn custom-btn">Edit</a>
 
                     <form asp-controller="Order" asp-action="DeleteConfirmed" method="post" style="display:inline;">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@order.OrderId" />
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
+                        <button type="submit" class="btn custom-btn" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
                     </form>
                 </td>
             </tr>
@@ -117,27 +117,19 @@
                 <td><input type="checkbox" disabled @(customer.ApprovedByAdmin ? "checked" : "") /></td>
 
                 <td>
-                <a asp-controller="User" asp-action="Edit" asp-route-id="@customer.UserId" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-controller="User" asp-action="Edit" asp-route-id="@customer.UserId" class="btn custom-btn">Edit</a>
 
                 <form asp-controller="User" asp-action="DeleteConfirmed" method="post" style="display:inline;">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="userId" value="@customer.UserId" />
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
+                        <button type="submit" class="btn custom-btn" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
                 </form>
                 </td>
 
                 <td>
                 <span> @customer.UserId</span>
                 </td>
-
-
-
-
-
-
             </tr>
-
-           
         }
     </tbody>
 </table>

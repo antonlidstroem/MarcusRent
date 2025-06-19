@@ -72,8 +72,11 @@ namespace MarcusRent.Controllers
                 Price = car.PricePerDay,
                 Brand = car.Brand,
                 Model = car.Model,
+                StartDate = DateTime.Today,
+                EndDate = DateTime.Today.AddDays(1)
             };
 
+            TempData["CarId"] = carId;
             ViewBag.PricePerDay = car.PricePerDay;
             ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
 
@@ -93,6 +96,8 @@ namespace MarcusRent.Controllers
                 return View(viewModel);
             }
 
+            DebugHelper.DebugModelStatePostCreate(ModelState);
+
             if (ModelState.IsValid)
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -100,6 +105,7 @@ namespace MarcusRent.Controllers
                 if (user == null)
                 {
                     TempData["TempData"] = "Du måste vara inloggad för att boka.";
+                    TempData["CarId"] = viewModel.CarId;
                     return RedirectToAction("Login", "Account");
                 }
 
@@ -118,6 +124,7 @@ namespace MarcusRent.Controllers
                 if (isBooked)
                 {
                     TempData["TempData"] = "Bilen är tyvärr upptagen under denna tidsperiod.";
+                    return View(viewModel);
                 }
                 else
                 {

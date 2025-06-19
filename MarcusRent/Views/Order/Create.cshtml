@@ -1,5 +1,12 @@
 ﻿@model MarcusRent.Models.OrderViewModel
 
+@if (TempData["TempData"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["TempData"]
+    </div>
+}
+
 @{
     // Säkerställ invariant culture för decimal i JavaScript
     var pricePerDayJs = Model.Price == 0m
@@ -42,7 +49,7 @@
 
 
 
-    <button type="submit" class="btn btn-primary">Boka</button>
+    <button type="submit" class="btn custom-btn">Boka</button>
 </form>
 
 @section Scripts {

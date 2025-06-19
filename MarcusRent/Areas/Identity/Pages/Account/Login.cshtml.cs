@@ -87,6 +87,7 @@ namespace MarcusRent.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
@@ -104,7 +105,16 @@ namespace MarcusRent.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            var CarId = TempData["CarId"];
+
+            if (CarId != null)
+            {
+                returnUrl += "?CarId=" + CarId;
+            }
+            
+
             returnUrl ??= Url.Content("~/");
+            
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
