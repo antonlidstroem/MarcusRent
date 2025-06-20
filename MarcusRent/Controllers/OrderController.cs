@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using MarcusRent.Repositories;
 using MarcusRental2.Repositories;
+using System.Data;
 
 namespace MarcusRent.Controllers
 {
@@ -33,7 +34,35 @@ namespace MarcusRent.Controllers
         //GET: Order
         public async Task<IActionResult> Index()
         {
-            var orders = await _orderRepository.GetAllOrdersAsync();
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                TempData["TempData"] = "Endast inloggade kunder kan se sina bokningar.";
+                //return RedirectToAction("Login", "Account");
+                //return RedirectToAction("Login", "Account", new { area = "Identity" });
+                return Redirect("/Identity/Account/Login");
+
+
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var isAdmin = userRoles.Contains("Admin");
+
+            IEnumerable<Order> orders;
+
+            if (isAdmin)
+            {
+
+                orders = await _orderRepository.GetAllOrdersAsync();
+            }
+            else
+            {
+                orders = await _orderRepository.GetOrdersByUserIdAsync(user.Id);
+            }
+
+
             var model = _mapper.Map<List<OrderViewModel>>(orders);
             TempData["CarId"] = null;
             return View(model);
