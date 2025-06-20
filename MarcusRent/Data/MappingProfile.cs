@@ -83,10 +83,15 @@ namespace MarcusRent.Data
 
 
 
+
+
+
             CreateMap<OrderViewModel, Order>()
-             .ForMember(dest => dest.Car, opt => opt.Ignore()) // Undvik att EF spårar ny bil
-              .ForMember(dest => dest.Customer, opt => opt.Ignore()) // Om Customer används
-              .ForMember(dest => dest.UserId, opt => opt.Ignore()); // UserId sätts manuellt
+             .ForMember(dest => dest.Car, opt => opt.Ignore())
+             .ForMember(dest => dest.Customer, opt => opt.Ignore())
+             .ForMember(dest => dest.UserId, opt => opt.Ignore())
+             .ForMember(dest => dest.Price, opt => opt.Ignore());
+
         }
     }
 }

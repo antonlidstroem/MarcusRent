@@ -1,81 +1,71 @@
 ﻿@model List<MarcusRent.Models.CarViewModel>
 
 @{
-    ViewData["Title"] = "Car List";
+    ViewData["Title"] = "Bilar";
 }
 
 @if (TempData["TempData"] != null)
 {
-    <div class="alert alert-danger">
+    <div class="alert alert-success" role="alert">
         @TempData["TempData"]
     </div>
 }
 
+<h1 class="mb-3 text-center">Tillgängliga bilar för uthyrning</h1>
 
-
-<h1>Car List</h1>
-
-<h3>Dessa bilar är tillgängliga för uthyrning</h3>
-
-<p>
-    <a asp-action="Create" class="btn custom-btn">Create New</a>
+<p class="lead text-center mb-5">
+    Upptäck vårt fantastiska utbud av bilar – perfekta för alla tillfällen! Boka enkelt och kör iväg med stil.
 </p>
 
-<table class="table table-striped table-bordered">
-    <thead class="table-dark">
-        <tr>
-            <th>ImageGallery</th>
-            <th>Brand</th>
-            <th>Model</th>
-            <th>Year</th>
-            <th>Price/Day</th>
-            <th>Book</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            var galleryId = "gallery_" + item.CarId;
+<div class="table-responsive shadow rounded">
+    <table class="table table-striped table-hover align-middle mb-0">
+        <thead class="table-dark">
             <tr>
-                <td>
-                    @if (item.ImageUrls != null && item.ImageUrls.Any())
-                    {
-                        <div id="@galleryId" class="position-relative">
-                            <img src="@item.ImageUrls[0]" alt="Car Image" class="img-fluid rounded shadow gallery-image" style="max-height:140px; object-fit:cover;" />
-                            <button type="button" class="prev-btn">&#10094;</button>
-                            <button type="button" class="next-btn">&#10095;</button>
-                            <input type="hidden" class="image-urls" value="@string.Join(";", item.ImageUrls)" />
-                        </div>
-
-
-
-
-                    
-                    }
-                    else
-                    {
-                        <span>No images</span>
-                    }
-                </td>
-                <td>@item.Brand</td>
-                <td>@item.Model</td>
-                <td>@item.Year</td>
-                <td>@item.PricePerDay.ToString("C")</td>
-
-                <td>
-                    @* Länk till Order/Create med bilens id som query-param *@
-                    <a asp-controller="Order" asp-action="Create" asp-route-carId="@item.CarId" class="btn custom-btn">Boka här</a>
-                </td>
-
-
-
-               
-                @* <td>
-                    <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.CarId" class="btn btn-sm btn-danger">Delete</a>
-                </td> *@
+                <th style="min-width: 300px;">Bildgalleri</th>
+                <th>Märke</th>
+                <th>Modell</th>
+                <th>År</th>
+                <th>Pris/dag</th>
+                <th>Boka</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var galleryId = "gallery_" + item.CarId;
+                <tr>
+                    <td style="min-width: 320px; max-width: 450px;">
+                        @if (item.ImageUrls != null && item.ImageUrls.Any())
+                        {
+                            <div id="@galleryId" class="position-relative mx-auto" style="max-width: 440px; height: 250px;">
+                                <img src="@item.ImageUrls[0]" alt="Bild på @item.Brand @item.Model"
+                                     class="img-fluid rounded shadow" style="width: 100%; height: 250px; object-fit: cover;" />
+                                <button type="button" class="btn btn-light position-absolute top-50 start-0 translate-middle-y prev-btn"
+                                        style="z-index: 10; width: 40px; height: 40px; font-size: 28px;">
+                                    &#10094;
+                                </button>
+                                <button type="button" class="btn btn-light position-absolute top-50 end-0 translate-middle-y next-btn"
+                                        style="z-index: 10; width: 40px; height: 40px; font-size: 28px;">
+                                    &#10095;
+                                </button>
+                                <input type="hidden" class="image-urls" value="@string.Join(";", item.ImageUrls)" />
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Ingen bild</span>
+                        }
+                    </td>
+                    <td>@item.Brand</td>
+                    <td>@item.Model</td>
+                    <td>@item.Year</td>
+                    <td>@item.PricePerDay.ToString("C")</td>
+                    <td>
+                        <a asp-controller="Order" asp-action="Create" asp-route-carId="@item.CarId"
+                           class="btn custom-btn btn-lg px-4 py-2">Boka här</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

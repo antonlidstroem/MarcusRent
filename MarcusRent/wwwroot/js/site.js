@@ -38,4 +38,35 @@
             }, initialDelay);
         }
     });
+
+
+
+    document.querySelectorAll('.price-calculation-container').forEach(form => {
+        const pricePerDay = parseFloat(form.dataset.pricePerDay);
+        const startDateInput = form.querySelector('input[asp-for="StartDate"], input[name="StartDate"]') || form.querySelector('input[type="date"]:first-of-type');
+        const endDateInput = form.querySelector('input[asp-for="EndDate"], input[name="EndDate"]') || form.querySelector('input[type="date"]:last-of-type');
+        const priceOutput = form.querySelector('.price-output');
+
+        if (!startDateInput || !endDateInput || !priceOutput || isNaN(pricePerDay)) return;
+
+        function calculatePrice() {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+
+            if (startDateInput.value && endDateInput.value && endDate > startDate) {
+                const diffTime = endDate - startDate;
+                const diffDays = diffTime / (1000 * 60 * 60 * 24);
+                const totalPrice = diffDays * pricePerDay;
+                priceOutput.value = totalPrice.toFixed(2) + " kr";
+            } else {
+                priceOutput.value = "";
+            }
+        }
+
+        startDateInput.addEventListener('change', calculatePrice);
+        endDateInput.addEventListener('change', calculatePrice);
+
+        calculatePrice();
+    });
 });
+

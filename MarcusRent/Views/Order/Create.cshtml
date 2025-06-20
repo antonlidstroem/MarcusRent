@@ -2,97 +2,86 @@
 
 @if (TempData["TempData"] != null)
 {
-    <div class="alert alert-danger">
+    <div class="alert alert-danger" role="alert">
         @TempData["TempData"]
     </div>
 }
 
 @{
-    // Säkerställ invariant culture för decimal i JavaScript
     var pricePerDayJs = Model.Price == 0m
         ? (ViewBag.PricePerDay ?? 0m)
-        : Model.Price; // Om Model.Price redan satt, annars ViewBag
+        : Model.Price;
 
     string pricePerDayStr = pricePerDayJs.ToString(System.Globalization.CultureInfo.InvariantCulture);
 }
 
-<h2>Boka bil</h2>
+<h2 class="mb-4 text-center">Boka bil</h2>
+
+<div class="row mx-auto" style="max-width: 900px;">
+    <div class="col-md-8">
+        <!-- Bilpresentation -->
+        @if (ViewBag.ImageUrls != null && ((List<string>)ViewBag.ImageUrls).Any())
+        {
+            var imageUrls = (List<string>)ViewBag.ImageUrls;
+            <div class="position-relative shadow rounded mb-3" style="height: 350px; overflow: hidden;">
+                <img src="@imageUrls[0]" alt="Bild på bilen"
+                     class="img-fluid rounded" style="width: 100%; height: 100%; object-fit: cover;" />
+                <button type="button" class="btn btn-light position-absolute top-50 start-0 translate-middle-y prev-btn"
+                        style="z-index: 10; width: 45px; height: 45px; font-size: 30px;">
+                    &#10094;
+                </button>
+                <button type="button" class="btn btn-light position-absolute top-50 end-0 translate-middle-y next-btn"
+                        style="z-index: 10; width: 45px; height: 45px; font-size: 30px;">
+                    &#10095;
+                </button>
+                <input type="hidden" class="image-urls" value="@string.Join(";", imageUrls)" />
+            </div>
 
 
-<p>Bokar bil: @ViewBag.CarInfo</p>
-<p>@ViewBag.PricePerDay kr/dag</p>
-
-<p>Pris per dag (JS): <strong>@pricePerDayStr</strong></p>
-
-<p>Beskrivning: @Model.CarDescription</p>
-
-@if (ViewBag.ImageUrls != null && ((List<string>)ViewBag.ImageUrls).Any())
-{
-    var imageUrls = (List<string>)ViewBag.ImageUrls;
-    <div class="image-gallery position-relative mb-4">
-        <img src="@imageUrls[0]" alt="Car Image" class="img-fluid rounded shadow gallery-image" style="max-height:200px; object-fit:cover;" />
-        <button type="button" class="prev-btn">&#10094;</button>
-        <button type="button" class="next-btn">&#10095;</button>
-        <input type="hidden" class="image-urls" value="@string.Join(";", imageUrls)" />
-    </div>
-}
-
-
-
-
-<form asp-action="Create" method="post">
-    <input type="hidden" asp-for="CarId" />
-    <input type="hidden" asp-for="Brand" />
-    <input type="hidden" asp-for="Model" />
-
-    <div class="form-group">
-        <label asp-for="StartDate"></label>
-        <input asp-for="StartDate" class="form-control" type="date" id="startDate" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="EndDate"></label>
-        <input asp-for="EndDate" class="form-control" type="date" id="endDate" />
-        <span asp-validation-for="EndDate" class="text-danger"></span>
-    </div>
-
-
-    <div class="form-group">
-        <label>Pris</label>
-        <input type="text" id="price" class="form-control" readonly />
-    </div>
+         
 
 
 
-    <button type="submit" class="btn custom-btn">Boka</button>
-</form>
 
-@section Scripts {
-    <script>
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
-        const priceInput = document.getElementById('price');
-        const pricePerDay = parseFloat('@pricePerDayStr');
 
-        function calculatePrice() {
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
-
-            if (startDateInput.value && endDateInput.value && endDate > startDate) {
-                const diffTime = endDate - startDate;
-                const diffDays = diffTime / (1000 * 60 * 60 * 24);
-                const totalPrice = diffDays * pricePerDay;
-                priceInput.value = totalPrice.toFixed(2) + " kr";
-            } else {
-                priceInput.value = "";
-            }
         }
+        <div class="p-3 bg-white rounded shadow-sm">
+            <p><strong>Bokar bil:</strong> @ViewBag.CarInfo</p>
+            <p><strong>Pris per dag:</strong> @ViewBag.PricePerDay kr</p>
+            <p><strong>Beskrivning:</strong></p>
+            <p>@Model.CarDescription</p>
+        </div>
+    </div>
 
-        startDateInput.addEventListener('change', calculatePrice);
-        endDateInput.addEventListener('change', calculatePrice);
+    <div class="col-md-4">
+        <form asp-action="Create" method="post" class="price-calculation-container p-4 rounded shadow-sm bg-light" style="min-height: 350px;"
+              data-price-per-day="@pricePerDayStr">
+            <input type="hidden" asp-for="CarId" />
+            <input type="hidden" asp-for="Brand" />
+            <input type="hidden" asp-for="Model" />
+            <input type="hidden" asp-for="CarDescription" />
 
-        // Beräkna pris direkt när sidan laddas (om datum redan ifyllda)
-        calculatePrice();
-    </script>
-}
+            <div class="mb-3">
+                <label asp-for="StartDate" class="form-label"></label>
+                <input asp-for="StartDate" class="form-control" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+                <small class="form-text text-muted">Välj startdatum för bokningen.</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="EndDate" class="form-label"></label>
+                <input asp-for="EndDate" class="form-control" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+                <small class="form-text text-muted">Välj slutdatum för bokningen.</small>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Total pris</label>
+                <div class="price-output border rounded p-3 bg-white text-center fs-4 fw-bold" style="letter-spacing: 1px;">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-booking btn-lg w-100">Boka nu!</button>
+        </form>
+    </div>
+</div>
