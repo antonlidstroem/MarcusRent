@@ -1,4 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
+    // Bildgalleri
     document.querySelectorAll('.image-gallery').forEach((gallery, galleryIndex) => {
         const img = gallery.querySelector('img');
         const urls = gallery.querySelector('.image-urls').value.split(';');
@@ -20,32 +21,23 @@
         }
 
         if (prevBtn && nextBtn) {
-            prevBtn.addEventListener('click', () => {
-                showImage(index - 1);
-            });
+            prevBtn.addEventListener('click', () => showImage(index - 1));
+            nextBtn.addEventListener('click', () => showImage(index + 1));
 
-            nextBtn.addEventListener('click', () => {
-                showImage(index + 1);
-            });
-
-            // Automatisk bläddring med individuell fördröjning
             const initialDelay = galleryIndex * 1000 + Math.random() * 1000;
-
             setTimeout(() => {
-                setInterval(() => {
-                    showImage(index + 1);
-                }, 5000);
+                setInterval(() => showImage(index + 1), 5000);
             }, initialDelay);
         }
     });
 
-
-
+    // Prisberäkning
     document.querySelectorAll('.price-calculation-container').forEach(form => {
         const pricePerDay = parseFloat(form.dataset.pricePerDay);
-        const startDateInput = form.querySelector('input[asp-for="StartDate"], input[name="StartDate"]') || form.querySelector('input[type="date"]:first-of-type');
-        const endDateInput = form.querySelector('input[asp-for="EndDate"], input[name="EndDate"]') || form.querySelector('input[type="date"]:last-of-type');
+        const startDateInput = form.querySelector('input[name="StartDate"]');
+        const endDateInput = form.querySelector('input[name="EndDate"]');
         const priceOutput = form.querySelector('.price-output');
+        const priceInput = form.querySelector('#price');
 
         if (!startDateInput || !endDateInput || !priceOutput || isNaN(pricePerDay)) return;
 
@@ -57,16 +49,22 @@
                 const diffTime = endDate - startDate;
                 const diffDays = diffTime / (1000 * 60 * 60 * 24);
                 const totalPrice = diffDays * pricePerDay;
-                priceOutput.value = totalPrice.toFixed(2) + " kr";
+
+                priceOutput.textContent = totalPrice.toFixed(2) + " kr";
+                if (priceInput) {
+                    priceInput.value = totalPrice.toFixed(2) + " kr";
+                }
             } else {
-                priceOutput.value = "";
+                priceOutput.textContent = "";
+                if (priceInput) {
+                    priceInput.value = "";
+                }
             }
         }
 
         startDateInput.addEventListener('change', calculatePrice);
         endDateInput.addEventListener('change', calculatePrice);
 
-        calculatePrice();
+        calculatePrice(); // kör direkt för att visa pris om datum är förifyllda
     });
 });
-

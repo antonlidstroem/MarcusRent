@@ -15,11 +15,14 @@
     string pricePerDayStr = pricePerDayJs.ToString(System.Globalization.CultureInfo.InvariantCulture);
 }
 
-<h2 class="mb-4 text-center">Boka bil</h2>
+
+
+<h2 class="mb-4 text-center">Hyr din bil idag!</h2>
+<p class="text-center"><strong>Hyra bil har aldrig varit enklare – eller roligare!</strong></p>
 
 <div class="row mx-auto" style="max-width: 900px;">
+    @* BILDGALLERI *@
     <div class="col-md-8">
-        <!-- Bilpresentation -->
         @if (ViewBag.ImageUrls != null && ((List<string>)ViewBag.ImageUrls).Any())
         {
             var imageUrls = (List<string>)ViewBag.ImageUrls;
@@ -36,20 +39,15 @@
                 </button>
                 <input type="hidden" class="image-urls" value="@string.Join(";", imageUrls)" />
             </div>
-
-
-         
-
-
-
-
-
         }
+
+        @* BILPRESENTATION *@
         <div class="p-3 bg-white rounded shadow-sm">
-            <p><strong>Bokar bil:</strong> @ViewBag.CarInfo</p>
-            <p><strong>Pris per dag:</strong> @ViewBag.PricePerDay kr</p>
-            <p><strong>Beskrivning:</strong></p>
+            <p><strong>@ViewBag.CarInfo</strong> </p>
+
+
             <p>@Model.CarDescription</p>
+            <p><strong>Pris per dag:</strong> @ViewBag.PricePerDay kr</p>
         </div>
     </div>
 
@@ -76,12 +74,16 @@
             </div>
 
             <div class="mb-4">
-                <label class="form-label">Total pris</label>
+                <label class="form-label">Beräknat totalpris</label>
                 <div class="price-output border rounded p-3 bg-white text-center fs-4 fw-bold" style="letter-spacing: 1px;">
                 </div>
             </div>
+
+
 
             <button type="submit" class="btn-booking btn-lg w-100">Boka nu!</button>
         </form>
     </div>
 </div>
+
+
