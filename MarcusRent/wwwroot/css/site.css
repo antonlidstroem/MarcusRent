@@ -1,6 +1,7 @@
 html {
     font-size: 14px;
-    --color-fire-orange: #F57C00;
+    --color-fire-orange: #F9C544;
+    --color-fire-red: #E65214;
     --color-dark-charcoal: #1C1C1C;
     --color-light-gray: #E8E8E8;
     --color-metallic-gray: #B0B0B0;
@@ -263,3 +264,70 @@ body {
     margin-bottom: 1rem;
     color: var(--color-metallic-gray);
 }
+
+/* Navbar bakgrund med gradient från dina css-variabler */
+.custom-navbar {
+    background: linear-gradient(90deg, var(--color-fire-orange), var(--color-fire-red));
+    box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3);
+}
+
+    /* Text och ikoner i menyn */
+    .custom-navbar .nav-link {
+        color: var(--color-light-gray);
+        font-weight: 600;
+        position: relative;
+        transition: color 0.3s ease;
+    }
+
+        /* Hover-effekt på länkar */
+        .custom-navbar .nav-link:hover,
+        .custom-navbar .nav-link:focus {
+            color: var(--color-fire-orange);
+        }
+
+        /* Understrykning vid hover */
+        .custom-navbar .nav-link::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--color-fire-orange);
+            transition: width 0.3s ease;
+        }
+
+        .custom-navbar .nav-link:hover::after,
+        .custom-navbar .nav-link:focus::after {
+            width: 100%;
+        }
+
+        /* Aktiv sida */
+        .custom-navbar .nav-link.active {
+            color: var(--color-fire-orange);
+            font-weight: 700;
+            border-bottom: 2px solid var(--color-fire-orange);
+        }
+
+    /* Navbar toggler-ikon färg (mobil) */
+    .custom-navbar .navbar-toggler-icon {
+        filter: invert(1);
+    }
+
+    /* Logotyp: runda hörn och skugga */
+    .custom-navbar .navbar-brand img {
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(245, 124, 0, 0.7);
+    }
+
+    /* Bootstrap ikoner färg */
+    .custom-navbar .bi {
+        color: var(--color-light-gray);
+        transition: color 0.3s ease;
+    }
+
+    .custom-navbar .nav-link:hover .bi,
+    .custom-navbar .nav-link:focus .bi {
+        color: var(--color-fire-orange);
+    }
+

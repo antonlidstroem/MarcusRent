@@ -6,9 +6,19 @@
 
 <h1>Index</h1>
 
-@* <p>
-	<a asp-action="Create">Create New</a>
-</p> *@
+
+@if (User.IsInRole("Admin"))
+{
+	<p><strong>Välkommen Administratör!</strong></p>
+<p>Här ser du alla befintliga ordrar.</p>
+}
+
+@if (User.IsInRole("User"))
+{
+	<p><strong>Välkommen!</strong></p>
+	<p>Här ser du alla dina ordrar.</p>
+}
+
 <table class="table">
 	<thead>
 		<tr>
