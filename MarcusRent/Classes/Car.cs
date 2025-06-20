@@ -17,6 +17,8 @@ namespace MarcusRent.Classes
         [Range(0, double.MaxValue)]
         public decimal PricePerDay { get; set; }
         public bool Available { get; set; }
+
+        public string CarDescription { get; set; }
     }
 }
 

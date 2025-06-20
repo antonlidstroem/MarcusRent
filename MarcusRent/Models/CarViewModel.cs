@@ -21,5 +21,7 @@ namespace MarcusRent.Models
         public bool IsCurrentlyRented => !Available;
         public DateTime? CurrentRentalEndDate { get; set; }
         public string? CurrentCustomerName { get; set; }
+
+        public string CarDescription { get; set; }
     }
 }

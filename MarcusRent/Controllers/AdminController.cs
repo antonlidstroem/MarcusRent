@@ -36,6 +36,7 @@ namespace MarcusRent.Controllers
 
         public async Task<IActionResult> Index()
         {
+            TempData["CarId"] = null;
             var cars = await _carRepository.GetAllAsync();
             var orders = await _orderRepository.GetAllOrdersAsync();
             var users = await _userService.GetAllUsersAsync();

@@ -24,6 +24,22 @@
 
 <p>Pris per dag (JS): <strong>@pricePerDayStr</strong></p>
 
+<p>Beskrivning: @Model.CarDescription</p>
+
+@if (ViewBag.ImageUrls != null && ((List<string>)ViewBag.ImageUrls).Any())
+{
+    var imageUrls = (List<string>)ViewBag.ImageUrls;
+    <div class="image-gallery position-relative mb-4">
+        <img src="@imageUrls[0]" alt="Car Image" class="img-fluid rounded shadow gallery-image" style="max-height:200px; object-fit:cover;" />
+        <button type="button" class="prev-btn">&#10094;</button>
+        <button type="button" class="next-btn">&#10095;</button>
+        <input type="hidden" class="image-urls" value="@string.Join(";", imageUrls)" />
+    </div>
+}
+
+
+
+
 <form asp-action="Create" method="post">
     <input type="hidden" asp-for="CarId" />
     <input type="hidden" asp-for="Brand" />
@@ -80,34 +96,3 @@
         calculatePrice();
     </script>
 }
-@* 
-@section Scripts {
-    <script>
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
-        const priceInput = document.getElementById('price');
-        const pricePerDay = parseFloat('@pricePerDayStr');
-
-        function calculatePrice() {
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
-
-            if (startDateInput.value && endDateInput.value && endDate >= startDate) {
-                const diffTime = endDate - startDate;
-                const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1; // +1 för att inkludera båda dagarna
-                const totalPrice = diffDays * pricePerDay;
-                priceInput.value = totalPrice.toFixed(2) + " kr";
-            } else {
-                priceInput.value = "";
-            }
-        }
-
-        startDateInput.addEventListener('change', calculatePrice);
-        endDateInput.addEventListener('change', calculatePrice);
-        startDateInput.addEventListener('input', calculatePrice);
-        endDateInput.addEventListener('input', calculatePrice);
-
-        calculatePrice(); // Kör vid sidladdning
-    </script>
-}
- *@

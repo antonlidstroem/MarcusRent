@@ -12,7 +12,7 @@ namespace MarcusRent.Repositories
             _userManager = userManager;
         }
 
-        public async Task<ApplicationUser?> AddAsync(string email, string password, string role)
+        public async Task<ApplicationUser?> AddAsync(string firstName, string lastName, string email, string password, string role)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -27,8 +27,8 @@ namespace MarcusRent.Repositories
                 Email = email,
                 EmailConfirmed = true,
                 ApprovedByAdmin = true,
-                FirstName = "Test",
-                LastName = "Användare"
+                FirstName = firstName,
+                LastName = lastName
             };
 
             var result = await _userManager.CreateAsync(newUser, password);

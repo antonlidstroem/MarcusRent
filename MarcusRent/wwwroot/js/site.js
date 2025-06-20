@@ -10,7 +10,6 @@
         function showImage(i) {
             if (i < 0) i = urls.length - 1;
             if (i >= urls.length) i = 0;
-
             index = i;
             img.style.opacity = 0;
 
@@ -20,21 +19,23 @@
             }, 300);
         }
 
-        prevBtn.addEventListener('click', () => {
-            showImage(index - 1);
-        });
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                showImage(index - 1);
+            });
 
-        nextBtn.addEventListener('click', () => {
-            showImage(index + 1);
-        });
-
-        // Automatisk bläddring med individuell startfördröjning
-        const initialDelay = galleryIndex * 1000 + Math.random() * 1000; // förskjutning 0–(N sekunder)
-
-        setTimeout(() => {
-            setInterval(() => {
+            nextBtn.addEventListener('click', () => {
                 showImage(index + 1);
-            }, 5000);
-        }, initialDelay);
+            });
+
+            // Automatisk bläddring med individuell fördröjning
+            const initialDelay = galleryIndex * 1000 + Math.random() * 1000;
+
+            setTimeout(() => {
+                setInterval(() => {
+                    showImage(index + 1);
+                }, 5000);
+            }, initialDelay);
+        }
     });
 });

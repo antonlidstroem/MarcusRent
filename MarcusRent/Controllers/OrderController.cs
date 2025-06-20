@@ -41,6 +41,7 @@ namespace MarcusRent.Controllers
         {
             var orders = await _orderRepository.GetAllOrdersAsync();
             var model = _mapper.Map<List<OrderViewModel>>(orders);
+            TempData["CarId"] = null;
             return View(model);
         }
 
@@ -72,6 +73,7 @@ namespace MarcusRent.Controllers
                 Price = car.PricePerDay,
                 Brand = car.Brand,
                 Model = car.Model,
+                CarDescription = car.CarDescription,
                 StartDate = DateTime.Today,
                 EndDate = DateTime.Today.AddDays(1)
             };
@@ -79,6 +81,7 @@ namespace MarcusRent.Controllers
             TempData["CarId"] = carId;
             ViewBag.PricePerDay = car.PricePerDay;
             ViewBag.CarInfo = $"{car.Brand} {car.Model} ({car.Year})";
+            ViewBag.ImageUrls = car.CarImages.Select(i => i.Url).ToList();
 
             return View(viewModel);
         }

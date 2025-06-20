@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using MarcusRent.Classes;
 using Microsoft.EntityFrameworkCore;
+using MarcusRental2.Repositories;
 
 
 namespace MarcusRent.Controllers
@@ -9,10 +10,15 @@ namespace MarcusRent.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IOrderRepository _orderRepository;
 
-        public UserController(UserManager<ApplicationUser> userManager)
+
+
+
+        public UserController(UserManager<ApplicationUser> userManager, IOrderRepository orderRepository)
         {
             _userManager = userManager;
+            _orderRepository = orderRepository;
         }
 
         // GET: Users/Edit/id
@@ -20,6 +26,8 @@ namespace MarcusRent.Controllers
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
+
+            TempData["CarId"] = null;
 
             return View(user); // skapa en vy för detta
         }
@@ -29,6 +37,9 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, ApplicationUser updatedUser)
         {
+
+            TempData["CarId"] = null;
+
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
 
@@ -45,6 +56,7 @@ namespace MarcusRent.Controllers
             foreach (var error in result.Errors)
                 ModelState.AddModelError("", error.Description);
 
+
             return View(user);
         }
 
@@ -53,6 +65,8 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string userId)
         {
+            TempData["CarId"] = null;
+
             if (string.IsNullOrEmpty(userId))
             {
                 TempData["ErrorMessage"] = "ID saknas!";
@@ -64,6 +78,14 @@ namespace MarcusRent.Controllers
             if (user == null)
             {
                 TempData["ErrorMessage"] = $"Ingen användare med id {userId} hittades.";
+                return RedirectToAction("Index", "Admin");
+            }
+
+            // Kontrollera om användaren har ordrar
+            var orders = await _orderRepository.GetOrdersByUserIdAsync(user.Id);
+            if (orders.Any())
+            {
+                TempData["ErrorMessage"] = "Användaren kan inte tas bort eftersom den har kopplade ordrar.";
                 return RedirectToAction("Index", "Admin");
             }
 
@@ -81,5 +103,10 @@ namespace MarcusRent.Controllers
 
     }
 }
+
+
+    
+
+   
 
 

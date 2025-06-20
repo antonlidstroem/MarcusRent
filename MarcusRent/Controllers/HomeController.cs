@@ -15,6 +15,7 @@ namespace MarcusRent.Controllers
 
         public IActionResult Index()
         {
+            TempData["CarId"] = null;
             return View();
         }
 

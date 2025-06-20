@@ -89,6 +89,12 @@ namespace MarcusRental2.Repositories
                 .SumAsync(o => o.Price);
         }
 
+        public async Task<List<Order>> GetOrdersByUserIdAsync(string userId)
+        {
+            return await _context.Orders
+                .Where(o => o.UserId == userId)
+                .ToListAsync();
+        }
 
     }
 }

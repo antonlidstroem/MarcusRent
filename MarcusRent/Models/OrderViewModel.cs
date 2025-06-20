@@ -40,6 +40,8 @@ namespace MarcusRent.Models
 
         //public ApplicationUser User { get; set; }
 
+        public string CarDescription { get; set; }
+
     }
 }
 

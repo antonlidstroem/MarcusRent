@@ -17,5 +17,7 @@ namespace MarcusRental2.Repositories
         //decimal GetTotalEarningsForCar(object id);
 
         Task<decimal> GetTotalEarningsForCarAsync(int id);
+        Task<List<Order>> GetOrdersByUserIdAsync(string userId);
+
     }
 }
