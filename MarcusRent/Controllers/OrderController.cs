@@ -279,15 +279,24 @@ namespace MarcusRent.Controllers
                 return NotFound();
             }
 
-            try
+            var user = await _userManager.GetUserAsync(User);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var isAdmin = userRoles.Contains("Admin");
+
+            await _orderRepository.DeleteOrderAsync(id);
+
+            if (isAdmin)
             {
-                await _orderRepository.DeleteOrderAsync(id);
                 return RedirectToAction("Index", "Admin");
             }
-            catch (DbUpdateException)
+            else
             {
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("Index", "Order");
             }
+
+            
+            
+           
         }
 
 
