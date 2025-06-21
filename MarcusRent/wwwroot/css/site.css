@@ -35,7 +35,7 @@ body {
 .form-control:focus,
 .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--color-fire-orange);
-    outline: none; /* Behåll fokusindikator via box-shadow */
+    outline: none; /* Beh?ll fokusindikator via box-shadow */
 }
 
 /* ==========================
@@ -45,7 +45,7 @@ body {
     transition: opacity 2s ease-in-out;
     opacity: 1;
     margin-bottom: 1.5rem;
-    display: block; /* bättre än text-align på img */
+    display: block; /* b?ttre ?n text-align p? img */
     margin-left: auto;
     margin-right: auto;
 }
@@ -90,8 +90,8 @@ body {
 
     .custom-btn:hover,
     .custom-btn:focus {
-        background-color: #e56e00;  mörkare orange 
-        color: white;
+        background-color: #e56e00;
+        m?rkare orange color: white;
     }
 
 
@@ -106,7 +106,7 @@ body {
 
     .btn-booking:hover,
     .btn-booking:focus {
-        background-color: #e16900; /* ännu mörkare orange */
+        background-color: #e16900; /* ?nnu m?rkare orange */
         box-shadow: 0 6px 14px rgba(225, 105, 0, 0.6);
         outline: none;
     }
@@ -181,7 +181,7 @@ body {
         object-fit: cover;
         border-radius: 15px;
         transition: transform 0.4s ease;
-        will-change: transform; /* För bättre prestanda vid skalning */
+        will-change: transform; /* F?r b?ttre prestanda vid skalning */
     }
 
     .car-image-container:hover img {
@@ -277,13 +277,13 @@ body {
    Alerts
    ========================== */
 .alert-danger {
-    background-color: #fbe9e7; /* ljus röd/orange ton */
+    background-color: #fbe9e7; /* ljus r?d/orange ton */
     color: var(--color-fire-orange);
     border: 1px solid var(--color-fire-orange);
 }
 
 .alert-success {
-    background-color: #e6f4ea; /* ljus grön ton */
+    background-color: #e6f4ea; /* ljus gr?n ton */
     color: #2a7a35;
     border: 1px solid #2a7a35;
 }
@@ -325,12 +325,12 @@ body {
     background-color: var(--color-fire-orange);
 }
 
-/* Aktiv - t.ex. grön */
+/* Aktiv - t.ex. gr?n */
 .badge-active {
     background-color: #2a7a35; /* eller definiera en CSS-variabel om du vill */
 }
 
-/* Avslutad - t.ex. röd */
+/* Avslutad - t.ex. r?d */
 .badge-finished {
     background-color: var(--color-fire-red);
 }
@@ -348,7 +348,7 @@ body {
 
 .page-subtitle {
     font-size: 1.25rem;
-    color: #555; /* lite mjukare än svart */
+    color: #555; /* lite mjukare ?n svart */
     text-align: center;
     margin-bottom: 3rem;
     max-width: 600px;
@@ -356,7 +356,7 @@ body {
     margin-right: auto;
     line-height: 1.5;
     font-weight: 400;
-    font-style: italic; /* för lite extra elegans, valfritt */
+    font-style: italic; /* f?r lite extra elegans, valfritt */
 }
 
 
@@ -368,8 +368,8 @@ body {
     align-items: center;
     text-align: center;
     padding: 2rem 1rem;
-    background-color: #f8f9fa; /* ljus grå bakgrund */
-    color: #1C1C1C; /* mörk text */
+    background-color: #f8f9fa; /* ljus gr? bakgrund */
+    color: #1C1C1C; /* m?rk text */
     font-family: 'Poppins', sans-serif;
 }
 
@@ -377,7 +377,7 @@ body {
 .logo-image {
     width: 200px;
     height: auto;
-    object-fit: contain; 
+    object-fit: contain;
     box-shadow: 0 0 20px rgba(0,0,0,0.4);
     margin-bottom: 1.5rem;
     transition: transform 0.3s ease;
