@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MarcusRent.Classes;
-using MarcusRent.Data;
 using MarcusRent.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using MarcusRent.Repositories;
 using MarcusRental2.Repositories;
-using System.Data;
+
 
 namespace MarcusRent.Controllers
 {
