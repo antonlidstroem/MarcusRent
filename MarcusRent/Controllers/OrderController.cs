@@ -42,12 +42,9 @@ namespace MarcusRent.Controllers
                 //return RedirectToAction("Login", "Account");
                 //return RedirectToAction("Login", "Account", new { area = "Identity" });
                 return Redirect("/Identity/Account/Login");
-
-
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);
-
             var isAdmin = userRoles.Contains("Admin");
 
             IEnumerable<Order> orders;
@@ -61,7 +58,6 @@ namespace MarcusRent.Controllers
             {
                 orders = await _orderRepository.GetOrdersByUserIdAsync(user.Id);
             }
-
 
             var model = _mapper.Map<List<OrderViewModel>>(orders);
             TempData["CarId"] = null;
@@ -293,12 +289,7 @@ namespace MarcusRent.Controllers
             {
                 return RedirectToAction("Index", "Order");
             }
-
-            
-            
-           
         }
-
 
         private async Task<bool> PrepareCarViewDataAsync(int carId)
         {

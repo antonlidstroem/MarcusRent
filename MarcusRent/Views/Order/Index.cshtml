@@ -2,6 +2,9 @@
 
 @{
 	ViewData["Title"] = "Index";
+	var today = DateTime.Today;
+	var activeOrders = Model.Where(o => o.EndDate >= today).OrderBy(o => o.StartDate);
+	var oldOrders = Model.Where(o => o.EndDate < today).OrderByDescending(o => o.EndDate);
 }
 
 <h1>Index</h1>
@@ -19,9 +22,21 @@
 	<p>Här ser du alla dina ordrar.</p>
 }
 
+
+@* GENERERAR AKTIVA ORDRAR *@
+<div class="card mb-5 shadow">
+<h2>Aktuella ordrar</h2>
+@if (!activeOrders.Any())
+{
+	<p>Inga aktuella ordrar just nu.</p>
+}
+else{
+
+
 <table class="table">
 	<thead>
 		<tr>
+			<th>Status</th>
 			<th>@Html.DisplayNameFor(model => model.StartDate)</th>
 			<th>@Html.DisplayNameFor(model => model.EndDate)</th>
 			<th>@Html.DisplayNameFor(model => model.Brand)</th>
@@ -33,9 +48,10 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var item in Model)
+		@foreach (var item in activeOrders)
 		{
 			<tr>
+					<td><span class="badge bg-success">Aktiv</span></td>
 				<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
 				<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
 				<td>@Html.DisplayFor(modelItem => item.Brand)</td>
@@ -43,19 +59,88 @@
 				<td>@Html.DisplayFor(modelItem => item.Year)</td>
 				<td>@Html.DisplayFor(modelItem => item.Price)</td>
 				<td>@Html.DisplayFor(modelItem => item.ActiveOrder)</td>
+						<td>
+							<a asp-controller="Order" asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-sm custom-btn me-1" title="Redigera">
+								<i class="bi bi-pencil-fill text-white"></i>
+							</a>
+							<form asp-controller="Order" asp-action="DeleteConfirmed" method="post" class="d-inline">
+								@Html.AntiForgeryToken()
+								<input type="hidden" name="id" value="@item.OrderId" />
+								<button type="submit" class="btn btn-sm custom-btn" onclick="return confirm('Är du säker på att du vill ta bort denna order?');" title="Ta bort">
+									<i class="bi bi-trash-fill text-white"></i>
+								</button>
+							</form>
+						</td>
 				<td>
-				<form asp-controller="Order" asp-action="DeleteConfirmed" method="post" style="display:inline;">
-					@Html.AntiForgeryToken()
-					<input type="hidden" name="id" value="@item.OrderId" />
-					<button type="submit" class="btn custom-btn" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
-				</form>
-				</td>
-				<td>
-					@* <a asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-sm btn-warning">Ändra</a>
-					<a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-sm btn-info">Detaljer</a>
-					<a asp-action="Delete" asp-route-id="@item.OrderId" class="btn btn-sm btn-danger">Ta bort</a> *@
 				</td>
 			</tr>
 		}
 	</tbody>
 </table>
+}
+</div>
+
+@* SKRIVER UT GAMLA ORDRAR *@
+<div class="card mb-5 shadow">
+<h2 class="mt-4">Avslutade ordrar</h2>
+@if (!oldOrders.Any())
+{
+	<p>Inga avslutade ordrar.</p>
+}
+else
+{
+	 
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Status</th>
+				<th>@Html.DisplayNameFor(model => model.StartDate)</th>
+				<th>@Html.DisplayNameFor(model => model.EndDate)</th>
+				<th>@Html.DisplayNameFor(model => model.Brand)</th>
+				<th>@Html.DisplayNameFor(model => model.Model)</th>
+				<th>@Html.DisplayNameFor(model => model.Year)</th>
+				<th>@Html.DisplayNameFor(model => model.Price)</th>
+				<th>@Html.DisplayNameFor(model => model.ActiveOrder)</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in oldOrders)
+			{
+				<tr>
+					<td><span class="badge bg-danger">Avslutad</span></td>
+					<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+					<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+					<td>@Html.DisplayFor(modelItem => item.Brand)</td>
+					<td>@Html.DisplayFor(modelItem => item.Model)</td>
+					<td>@Html.DisplayFor(modelItem => item.Year)</td>
+					<td>@Html.DisplayFor(modelItem => item.Price)</td>
+					<td>@Html.DisplayFor(modelItem => item.ActiveOrder)</td>
+					@* <td>
+						<form asp-controller="Order" asp-action="DeleteConfirmed" method="post" style="display:inline;">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="id" value="@item.OrderId" />
+							<button type="submit" class="btn custom-btn" onclick="return confirm('Är du säker på att du vill ta bort denna order?');">Ta bort</button>
+						</form>
+					</td> *@
+						<td>
+							<a asp-controller="Order" asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-sm custom-btn me-1" title="Redigera">
+								<i class="bi bi-pencil-fill text-white"></i>
+							</a>
+							<form asp-controller="Order" asp-action="DeleteConfirmed" method="post" class="d-inline">
+								@Html.AntiForgeryToken()
+								<input type="hidden" name="id" value="@item.OrderId" />
+								<button type="submit" class="btn btn-sm custom-btn" onclick="return confirm('Är du säker på att du vill ta bort denna order?');" title="Ta bort">
+									<i class="bi bi-trash-fill text-white"></i>
+								</button>
+							</form>
+						</td>
+					<td>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+}
+</div>
