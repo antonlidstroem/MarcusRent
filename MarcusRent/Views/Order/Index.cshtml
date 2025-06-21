@@ -1,19 +1,39 @@
 ﻿@model IEnumerable<MarcusRent.Models.OrderViewModel>
 
+	
 @{
 	ViewData["Title"] = "Index";
+
+	@* SKAPAR LISTOR MED KOMMANDE, AKTIVA OCH GAMLA ORDRAR *@
 	var today = DateTime.Today;
-	var activeOrders = Model.Where(o => o.EndDate >= today).OrderBy(o => o.StartDate);
-	var oldOrders = Model.Where(o => o.EndDate < today).OrderByDescending(o => o.EndDate);
+	var upcomingOrders = Model
+		.Where(o => o.StartDate > today)
+		.OrderBy(o => o.StartDate);
+
+	var activeOrders = Model
+		.Where(o => o.EndDate >= today)
+		.OrderBy(o => o.StartDate);
+
+	var oldOrders = Model
+		.Where(o => o.EndDate < today)
+		.OrderByDescending(o => o.EndDate);
+
 }
 
-<h1>Index</h1>
+@if (TempData["TempData"] != null)
+{
+	<div class="alert alert-success" role="alert">
+		@TempData["TempData"]
+	</div>
+}
 
+<div class="card mb-5 shadow">
+<h1>ORDRAR</h1>
 
 @if (User.IsInRole("Admin"))
 {
 	<p><strong>Välkommen Administratör!</strong></p>
-<p>Här ser du alla befintliga ordrar.</p>
+	<p>Här ser du alla befintliga ordrar.</p>
 }
 
 @if (User.IsInRole("User"))
@@ -21,44 +41,43 @@
 	<p><strong>Välkommen!</strong></p>
 	<p>Här ser du alla dina ordrar.</p>
 }
+</div>
 
 
-@* GENERERAR AKTIVA ORDRAR *@
 <div class="card mb-5 shadow">
-<h2>Aktuella ordrar</h2>
-@if (!activeOrders.Any())
-{
-	<p>Inga aktuella ordrar just nu.</p>
-}
-else{
 
-
-<table class="table">
-	<thead>
-		<tr>
-			<th>Status</th>
-			<th>@Html.DisplayNameFor(model => model.StartDate)</th>
-			<th>@Html.DisplayNameFor(model => model.EndDate)</th>
-			<th>@Html.DisplayNameFor(model => model.Brand)</th>
-			<th>@Html.DisplayNameFor(model => model.Model)</th>
-			<th>@Html.DisplayNameFor(model => model.Year)</th>
-			<th>@Html.DisplayNameFor(model => model.Price)</th>
-			<th>@Html.DisplayNameFor(model => model.ActiveOrder)</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var item in activeOrders)
-		{
-			<tr>
-					<td><span class="badge bg-success">Aktiv</span></td>
-				<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
-				<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
-				<td>@Html.DisplayFor(modelItem => item.Brand)</td>
-				<td>@Html.DisplayFor(modelItem => item.Model)</td>
-				<td>@Html.DisplayFor(modelItem => item.Year)</td>
-				<td>@Html.DisplayFor(modelItem => item.Price)</td>
-				<td>@Html.DisplayFor(modelItem => item.ActiveOrder)</td>
+@* GENERERAR KOMMANDE ORDRAR *@
+<h2>Kommande ordrar</h2>
+@if (!upcomingOrders.Any())
+	{
+		<p>Inga kommande ordrar just nu.</p>
+	}
+	else
+	{
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Status</th>
+					<th>@Html.DisplayNameFor(model => model.StartDate)</th>
+					<th>@Html.DisplayNameFor(model => model.EndDate)</th>
+					<th>@Html.DisplayNameFor(model => model.Brand)</th>
+					<th>@Html.DisplayNameFor(model => model.Model)</th>
+					<th>@Html.DisplayNameFor(model => model.Year)</th>
+					<th>@Html.DisplayNameFor(model => model.Price)</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in upcomingOrders)
+				{
+					<tr>
+						<td><span class="badge bg-info text-light badge-fixed">Kommande</span></td>
+						<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+						<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+						<td>@Html.DisplayFor(modelItem => item.Brand)</td>
+						<td>@Html.DisplayFor(modelItem => item.Model)</td>
+						<td>@Html.DisplayFor(modelItem => item.Year)</td>
+						<td>@Html.DisplayFor(modelItem => item.Price)</td>
 						<td>
 							<a asp-controller="Order" asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-sm custom-btn me-1" title="Redigera">
 								<i class="bi bi-pencil-fill text-white"></i>
@@ -71,52 +90,109 @@ else{
 								</button>
 							</form>
 						</td>
-				<td>
-				</td>
-			</tr>
-		}
-	</tbody>
-</table>
-}
-</div>
+						<td>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+
+
+@* GENERERAR AKTIVA ORDRAR *@
+<br />
+	<h2>Aktuella ordrar</h2>
+	@if (!activeOrders.Any())
+	{
+		<p>Inga aktuella ordrar just nu.</p>
+	}
+	else
+	{
+
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Status</th>
+					<th>@Html.DisplayNameFor(model => model.StartDate)</th>
+					<th>@Html.DisplayNameFor(model => model.EndDate)</th>
+					<th>@Html.DisplayNameFor(model => model.Brand)</th>
+					<th>@Html.DisplayNameFor(model => model.Model)</th>
+					<th>@Html.DisplayNameFor(model => model.Year)</th>
+					<th>@Html.DisplayNameFor(model => model.Price)</th>
+					@* <th>@Html.DisplayNameFor(model => model.ActiveOrder)</th> *@
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in activeOrders)
+				{
+					<tr>
+						<td><span class="badge bg-success badge-fixed">Aktiv</span></td>
+						<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+						<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+						<td>@Html.DisplayFor(modelItem => item.Brand)</td>
+						<td>@Html.DisplayFor(modelItem => item.Model)</td>
+						<td>@Html.DisplayFor(modelItem => item.Year)</td>
+						<td>@Html.DisplayFor(modelItem => item.Price)</td>
+						@* <td>@Html.DisplayFor(modelItem => item.ActiveOrder)</td> *@
+						<td>
+							<a asp-controller="Order" asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-sm custom-btn me-1" title="Redigera">
+								<i class="bi bi-pencil-fill text-white"></i>
+							</a>
+							<form asp-controller="Order" asp-action="DeleteConfirmed" method="post" class="d-inline">
+								@Html.AntiForgeryToken()
+								<input type="hidden" name="id" value="@item.OrderId" />
+								<button type="submit" class="btn btn-sm custom-btn" onclick="return confirm('Är du säker på att du vill ta bort denna order?');" title="Ta bort">
+									<i class="bi bi-trash-fill text-white"></i>
+								</button>
+							</form>
+						</td>
+						<td>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
 
 @* SKRIVER UT GAMLA ORDRAR *@
-<div class="card mb-5 shadow">
-<h2 class="mt-4">Avslutade ordrar</h2>
-@if (!oldOrders.Any())
-{
-	<p>Inga avslutade ordrar.</p>
-}
-else
-{
-	 
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Status</th>
-				<th>@Html.DisplayNameFor(model => model.StartDate)</th>
-				<th>@Html.DisplayNameFor(model => model.EndDate)</th>
-				<th>@Html.DisplayNameFor(model => model.Brand)</th>
-				<th>@Html.DisplayNameFor(model => model.Model)</th>
-				<th>@Html.DisplayNameFor(model => model.Year)</th>
-				<th>@Html.DisplayNameFor(model => model.Price)</th>
-				<th>@Html.DisplayNameFor(model => model.ActiveOrder)</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in oldOrders)
-			{
+
+	<h2 class="mt-4">Avslutade ordrar</h2>
+	@if (!oldOrders.Any())
+	{
+		<p>Inga avslutade ordrar.</p>
+	}
+	else
+	{
+
+		<table class="table">
+			<thead>
 				<tr>
-					<td><span class="badge bg-danger">Avslutad</span></td>
-					<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
-					<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
-					<td>@Html.DisplayFor(modelItem => item.Brand)</td>
-					<td>@Html.DisplayFor(modelItem => item.Model)</td>
-					<td>@Html.DisplayFor(modelItem => item.Year)</td>
-					<td>@Html.DisplayFor(modelItem => item.Price)</td>
-					<td>@Html.DisplayFor(modelItem => item.ActiveOrder)</td>
-					@* <td>
+					<th>Status</th>
+					<th>@Html.DisplayNameFor(model => model.StartDate)</th>
+					<th>@Html.DisplayNameFor(model => model.EndDate)</th>
+					<th>@Html.DisplayNameFor(model => model.Brand)</th>
+					<th>@Html.DisplayNameFor(model => model.Model)</th>
+					<th>@Html.DisplayNameFor(model => model.Year)</th>
+					<th>@Html.DisplayNameFor(model => model.Price)</th>
+					@* <th>@Html.DisplayNameFor(model => model.ActiveOrder)</th> *@
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in oldOrders)
+				{
+					<tr>
+						<td><span class="badge bg-danger badge-fixed" >Avslutad</span></td>
+						<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+						<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+						<td>@Html.DisplayFor(modelItem => item.Brand)</td>
+						<td>@Html.DisplayFor(modelItem => item.Model)</td>
+						<td>@Html.DisplayFor(modelItem => item.Year)</td>
+						<td>@Html.DisplayFor(modelItem => item.Price)</td>
+						@* <td>@Html.DisplayFor(modelItem => item.ActiveOrder)</td> *@
+						@* <td>
 						<form asp-controller="Order" asp-action="DeleteConfirmed" method="post" style="display:inline;">
 							@Html.AntiForgeryToken()
 							<input type="hidden" name="id" value="@item.OrderId" />
@@ -135,12 +211,12 @@ else
 								</button>
 							</form>
 						</td>
-					<td>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
+						<td>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
 
-}
+	}
 </div>

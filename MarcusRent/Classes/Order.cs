@@ -14,6 +14,6 @@ namespace MarcusRent.Classes
         public DateTime EndDate { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public decimal Price { get; set; }
-        public bool ActiveOrder { get; set; }
+        //public bool ActiveOrder { get; set; }
     }
 }

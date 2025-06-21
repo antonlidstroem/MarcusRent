@@ -33,6 +33,10 @@ namespace MarcusRental2.Repositories
                 .FirstOrDefaultAsync(o => o.OrderId == id);
         }
 
+
+     
+
+
         public async Task AddOrderAsync(Order order)
         {
             _context.Orders.Add(order);
@@ -83,9 +87,14 @@ namespace MarcusRental2.Repositories
         public async Task<List<Order>> GetOrdersByUserIdAsync(string userId)
         {
             return await _context.Orders
+                .Include(o => o.Car)
+                .Include(o=>o.Customer)
                 .Where(o => o.UserId == userId)
                 .ToListAsync();
         }
+
+      
+
 
     }
 }

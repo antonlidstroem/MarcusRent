@@ -120,7 +120,7 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderViewModel viewModel)
         {
-   
+
 
             if (!ModelState.IsValid)
             {
@@ -169,7 +169,7 @@ namespace MarcusRent.Controllers
 
             var order = _mapper.Map<Order>(viewModel);
             order.UserId = user.Id;
-            order.ActiveOrder = true;
+            //order.ActiveOrder = true;
             order.Price = days * car.PricePerDay;
 
             await _orderRepository.AddOrderAsync(order);
@@ -198,6 +198,16 @@ namespace MarcusRent.Controllers
 
             var viewModel = _mapper.Map<OrderViewModel>(order);
 
+            var car = await _carRepository.GetByIdAsync(order.CarId);
+
+            if (car != null)
+            {
+                viewModel.Brand = car.Brand;
+                viewModel.Model = car.Model;
+                viewModel.Year = car.Year;
+                viewModel.CarDescription = car.CarDescription;
+            }
+
             return View(viewModel);
         }
 
@@ -206,11 +216,12 @@ namespace MarcusRent.Controllers
         // POST: Order/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Admin")]
+        //[Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,StartDate,EndDate,Price,CarId,ActiveOrder, CarDescription")] OrderViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,StartDate,EndDate,Price,CarId,ActiveOrder, CarDescription, Model, Brand")] OrderViewModel viewModel)
         {
+           
             if (id != viewModel.OrderId || !ModelState.IsValid)
             {
                 return View(viewModel);
@@ -259,7 +270,20 @@ namespace MarcusRent.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index", "Admin");
+
+                //if (await IfAdminAsync())
+                //{
+                //    return RedirectToAction("Index", "Admin");
+                //}
+                //else
+                //{
+                //    return RedirectToAction("Index", "Order");
+                //}
+
+                return User.IsInRole("Admin")
+                ? RedirectToAction("Index", "Admin")
+                : RedirectToAction("Index", "Order");
+
             }
         }
 
@@ -275,21 +299,30 @@ namespace MarcusRent.Controllers
                 return NotFound();
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var isAdmin = userRoles.Contains("Admin");
+           
 
             await _orderRepository.DeleteOrderAsync(id);
 
-            if (isAdmin)
-            {
-                return RedirectToAction("Index", "Admin");
-            }
-            else
-            {
-                return RedirectToAction("Index", "Order");
-            }
+            //if (await IfAdminAsync())
+            //{
+            //    return RedirectToAction("Index", "Admin");
+            //}
+            //else
+            //{
+            //    return RedirectToAction("Index", "Order");
+            //}
+            return User.IsInRole("Admin")
+                ? RedirectToAction("Index", "Admin")
+                : RedirectToAction("Index", "Order");
         }
+
+        //private async Task<bool> IfAdminAsync()
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    var userRoles = await _userManager.GetRolesAsync(user);
+        //    var isAdmin = userRoles.Contains("Admin");
+        //    return isAdmin;
+        //}
 
         private async Task<bool> PrepareCarViewDataAsync(int carId)
         {
@@ -302,5 +335,7 @@ namespace MarcusRent.Controllers
 
             return true;
         }
+
+
     }
 }

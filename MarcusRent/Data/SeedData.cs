@@ -155,7 +155,7 @@ public class SeedData
                 StartDate = DateTime.Today.AddDays(-i * 3),
                 EndDate = DateTime.Today.AddDays(i + 1),
                 Price = cars[i].PricePerDay * (i + 1),
-                ActiveOrder = true,
+                //ActiveOrder = true,
                 Car = cars[i]
             });
         }

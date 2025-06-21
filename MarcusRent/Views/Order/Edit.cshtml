@@ -13,12 +13,20 @@
 
 		<p><strong>Bil:</strong> @Model.Brand @Model.Model</p>
 
+		<div class="form-group">
+			<label>Bil</label>
+			<input type="text" class="form-control" value="@Model.Brand @Model.Model" readonly />
+		</div>
+
+
 		<form asp-action="Edit">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<input type="hidden" asp-for="OrderId" />
 			<input type="hidden" asp-for="CarId" value="@Model.CarId" />
-		@* 	<input type="hidden" asp-for="Brand" value="@Model.Brand" />
-			<input type="hidden" asp-for="Model" value="@Model.Model" /> *@
+			<input type="hidden" asp-for="CarDescription" value="@Model.CarDescription" />
+
+			<input type="hidden" asp-for="Brand" value="@Model.Brand" />
+			<input type="hidden" asp-for="Model" value="@Model.Model" />
 			<div class="form-group">
 				<label asp-for="StartDate" class="control-label"></label>
 				<input asp-for="StartDate" class="form-control" />
@@ -34,11 +42,11 @@
 				<input asp-for="Price" class="form-control" />
 				<span asp-validation-for="Price" class="text-danger"></span>
 			</div>
-			<div class="form-group form-check">
+			@* <div class="form-group form-check">
 				<label class="form-check-label">
 					<input class="form-check-input" asp-for="ActiveOrder" /> @Html.DisplayNameFor(model => model.ActiveOrder)
 				</label>
-			</div>
+			</div> *@
 			<div class="form-group">
 				<input type="submit" value="Save" class="btn btn-primary" />
 			</div>

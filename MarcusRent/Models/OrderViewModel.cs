@@ -23,7 +23,7 @@ namespace MarcusRent.Models
         public DateTime EndDate { get; set; }
 
         public decimal Price { get; set; }
-        public bool ActiveOrder { get; set; }
+        //public bool ActiveOrder { get; set; }
 
         [BindNever]
         public List<SelectListItem> Cars { get; set; } = new List<SelectListItem>();
