@@ -5,11 +5,10 @@ namespace MarcusRent.Models
 {
     public class CarViewModel
     {
-        public int CarId { get; set; }     
-        public string Brand { get; set; }
-        
-        public string Model { get; set; }
+        public int CarId { get; set; }
+        public string Brand { get; set; } = "";
 
+        public string Model { get; set; } = "";
         public int Year { get; set; }
         public bool Available { get; set; } = true;
 
@@ -22,6 +21,6 @@ namespace MarcusRent.Models
         public DateTime? CurrentRentalEndDate { get; set; }
         public string? CurrentCustomerName { get; set; }
 
-        public string CarDescription { get; set; }
+        public string CarDescription { get; set; } = "";
     }
 }

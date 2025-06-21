@@ -1,8 +1,21 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Hem";
 }
 
+<div class="homepage-container">
 
+    <img src="~/images/MarcusCarRentals.png" alt="Logotypen för Marcus Rent" class="logo-image" />
 
-<img src="~/images/MarcusCarRentals.png" alt="Logotypen för Marcus Rent" class="image-bordered" />
+    <h1 class="main-title">Välkommen till Marcus Car Rentals</h1>
+    <p class="subtitle">
+        Din pålitliga biluthyrning med ett stort utbud av bilar för alla tillfällen.
+        Boka enkelt och kör iväg med stil!
+    </p>
+
+    <a asp-controller="Car" asp-action="Index" class="btn custom-btn cta-button btn-fade">
+        Utforska våra bilar
+    </a>
+
+</div>
+
 

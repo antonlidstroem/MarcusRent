@@ -47,7 +47,6 @@ namespace MarcusRent.Repositories
                     return null;
                 }
             }
-
             return newUser;
         }
 
@@ -55,12 +54,10 @@ namespace MarcusRent.Repositories
         {
             return _userManager.Users.ToList();
         }
-
         public async Task<ApplicationUser?> GetUserByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
         }
-
         public async Task ApproveUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -79,7 +76,6 @@ namespace MarcusRent.Repositories
                 await _userManager.DeleteAsync(user);
             }
         }
-
         public async Task UpdateUserAsync(ApplicationUser user)
         {
             await _userManager.UpdateAsync(user);

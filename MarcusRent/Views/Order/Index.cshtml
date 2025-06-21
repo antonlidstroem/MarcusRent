@@ -27,21 +27,19 @@
 	</div>
 }
 
-<div class="card mb-5 shadow">
-<h1>ORDRAR</h1>
+<h1 class="page-title">ORDRAR</h1>
 
 @if (User.IsInRole("Admin"))
 {
-	<p><strong>Välkommen Administratör!</strong></p>
-	<p>Här ser du alla befintliga ordrar.</p>
+	<p class="page-subtitle"><strong>Välkommen Administratör!</strong></p>
 }
 
 @if (User.IsInRole("User"))
 {
-	<p><strong>Välkommen!</strong></p>
-	<p>Här ser du alla dina ordrar.</p>
+	<p class="page-subtitle"><strong>Välkommen!</strong></p>
+	<p class="page-subtitle"> Här ser du alla dina ordrar.</p>
 }
-</div>
+
 
 
 <div class="card mb-5 shadow">
@@ -71,7 +69,10 @@
 				@foreach (var item in upcomingOrders)
 				{
 					<tr>
-						<td><span class="badge bg-info text-light badge-fixed">Kommande</span></td>
+
+						<td>
+							<span class="badge badge-upcoming badge-fixed">Kommande</span>
+						</td>
 						<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
 						<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
 						<td>@Html.DisplayFor(modelItem => item.Brand)</td>
@@ -101,7 +102,7 @@
 
 @* GENERERAR AKTIVA ORDRAR *@
 <br />
-	<h2>Aktuella ordrar</h2>
+	<h2>Aktiva ordrar</h2>
 	@if (!activeOrders.Any())
 	{
 		<p>Inga aktuella ordrar just nu.</p>
@@ -128,7 +129,7 @@
 				@foreach (var item in activeOrders)
 				{
 					<tr>
-						<td><span class="badge bg-success badge-fixed">Aktiv</span></td>
+						<td><span class="badge badge-active badge-fixed">Aktiv</span></td>
 						<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
 						<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
 						<td>@Html.DisplayFor(modelItem => item.Brand)</td>
@@ -184,7 +185,7 @@
 				@foreach (var item in oldOrders)
 				{
 					<tr>
-						<td><span class="badge bg-danger badge-fixed" >Avslutad</span></td>
+						<td><span class="badge badge-finished badge-fixed">Avslutad</span></td>
 						<td>@Html.DisplayFor(modelItem => item.StartDate)</td>
 						<td>@Html.DisplayFor(modelItem => item.EndDate)</td>
 						<td>@Html.DisplayFor(modelItem => item.Brand)</td>

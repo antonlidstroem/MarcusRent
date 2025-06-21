@@ -4,19 +4,19 @@
 	ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Order</h4>
+<h1 class="page-title">REDIGERA ORDER</h1>
 <hr />
 <div class="row">
 	<div class="col-md-4">
 
-		<p><strong>Bil:</strong> @Model.Brand @Model.Model</p>
+		
 
-		<div class="form-group">
+		<p class="page-subtitle"><strong>Bil:</strong> @Model.Brand @Model.Model</p>
+
+		@* <div class="form-group">
 			<label>Bil</label>
 			<input type="text" class="form-control" value="@Model.Brand @Model.Model" readonly />
-		</div>
+		</div> *@
 
 
 		<form asp-action="Edit">
@@ -42,13 +42,12 @@
 				<input asp-for="Price" class="form-control" />
 				<span asp-validation-for="Price" class="text-danger"></span>
 			</div>
-			@* <div class="form-group form-check">
-				<label class="form-check-label">
-					<input class="form-check-input" asp-for="ActiveOrder" /> @Html.DisplayNameFor(model => model.ActiveOrder)
-				</label>
-			</div> *@
+
+			
+
+			<br />
 			<div class="form-group">
-				<input type="submit" value="Save" class="btn btn-primary" />
+				<input type="submit" value="Save" class="btn custom-btn" />
 			</div>
 		</form>
 	</div>

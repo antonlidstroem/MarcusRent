@@ -104,7 +104,7 @@ namespace MarcusRent.Controllers
             }
 
             // KONTROLLERA SLUTDATUM
-            var endDateValidationResult = ValidateEndDate(viewModel);
+            var endDateValidationResult = await ValidateEndDateAsync(viewModel);
             if (endDateValidationResult != null)
                 return endDateValidationResult;
 
@@ -256,23 +256,22 @@ namespace MarcusRent.Controllers
                 ? RedirectToAction(adminAction, adminController)
                 : RedirectToAction(userAction, userController);
         }
-
-        private IActionResult? ValidateEndDate(OrderViewModel viewModel)
+        private async Task<IActionResult?> ValidateEndDateAsync(OrderViewModel viewModel)
         {
             if (CountDaysDifference(viewModel) <= 0)
             {
                 TempData["TempData"] = "Slutdatum måste vara efter startdatum.";
-                return RedirectToAction("Index", "Order");
+                await PrepareCarViewDataAsync(viewModel.CarId);
+                return View(viewModel);
             }
             return null;
         }
+
         private int CountDaysDifference(OrderViewModel viewModel)
         {
             int days = (viewModel.EndDate - viewModel.StartDate).Days;
             return days;
         }
-
-
         private async Task<IActionResult?> ValidateCarAvailabilityAsync(OrderViewModel viewModel)
         {
             var isBooked = await _orderRepository.IsCarBookedAsync(
@@ -285,7 +284,7 @@ namespace MarcusRent.Controllers
             {
                 TempData["TempData"] = "Bilen är tyvärr upptagen under denna tidsperiod.";
                 await PrepareCarViewDataAsync(viewModel.CarId);
-                return RedirectToAction("Index", "Order");
+                return View(viewModel);
             }
             return null;
         }

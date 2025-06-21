@@ -1,3 +1,6 @@
+/* ==========================
+   Root Variables & Base Styles
+   ========================== */
 html {
     font-size: 14px;
     --color-fire-orange: #F9C544;
@@ -6,6 +9,8 @@ html {
     --color-light-gray: #E8E8E8;
     --color-metallic-gray: #B0B0B0;
     --color-soft-black: #2A2A2A;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -14,36 +19,36 @@ html {
     }
 }
 
+body {
+    margin-bottom: 60px;
+    background-color: var(--color-light-gray);
+    color: var(--color-fire-orange);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ==========================
+   Focus Styles (Accessibility)
+   ========================== */
 .btn:focus,
 .btn:active:focus,
 .btn-link.nav-link:focus,
 .form-control:focus,
 .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--color-fire-orange);
+    outline: none; /* Behåll fokusindikator via box-shadow */
 }
 
-html {
-    position: relative;
-    min-height: 100%;
-}
-
-body {
-    margin-bottom: 60px;
-    background-color: var(--color-light-gray);
-    color: var(--color-fire-orange);
-}
-
-
-/*BILDKLASSER*/
+/* ==========================
+   Image Gallery Styles
+   ========================== */
 .image-gallery img {
     transition: opacity 2s ease-in-out;
     opacity: 1;
     margin-bottom: 1.5rem;
-    text-align: center;
+    display: block; /* bättre än text-align på img */
+    margin-left: auto;
+    margin-right: auto;
 }
-
-
-
 
 .gallery-image {
     width: 220px;
@@ -55,9 +60,9 @@ body {
 
 .image-bordered {
     display: block;
-    width: 80vw; 
+    width: 80vw;
     max-width: 600px;
-    height: auto; 
+    height: auto;
     margin: 20px auto;
     border: 2px solid var(--color-fire-orange);
     border-radius: 8px;
@@ -65,123 +70,93 @@ body {
     background-color: white;
 }
 
-
-/*KNAPPKLASSER*/
-.prev-btn {
-    position: absolute;
-    top: 50%;
-    left: 5px;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-.next-btn {
-    position: absolute;
-    top: 50%;
-    right: 5px;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-.custom-btn {
-    background-color: var(--color-fire-orange);
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-}
-
-    .custom-btn:hover {
-        background-color: #e56e00;
-        color: white;
-    }
-
-
-
-.card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(245, 124, 0, 0.3); /* matchar fire-orange i skuggan */
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.alert-danger {
-    background-color: #fbe9e7; /* ljus röd/orange ton */
-    color: var(--color-fire-orange);
-    border: 1px solid var(--color-fire-orange);
-}
-
-.alert-success {
-    background-color: #e6f4ea; /* ljus grön ton */
-    color: #2a7a35;
-    border: 1px solid #2a7a35;
-}
-
+/* ==========================
+   Button Styles (Consistent)
+   ========================== */
+.custom-btn,
 .btn-booking {
     background-color: var(--color-fire-orange);
     color: white;
-    padding: 1rem;
-    font-size: 1.3rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(245, 124, 0, 0.4);
     border: none;
-    width: 100%;
+    border-radius: 6px;
     font-weight: 600;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 
+.custom-btn {
+    padding: 0.6rem 1.2rem;
+}
+
+    .custom-btn:hover,
+    .custom-btn:focus {
+        background-color: #e56e00;  mörkare orange 
+        color: white;
+    }
+
+
+
+.btn-booking {
+    padding: 1rem;
+    font-size: 1.3rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(245, 124, 0, 0.4);
+    width: 100%;
+}
+
     .btn-booking:hover,
     .btn-booking:focus {
-        background-color: #e16900; /* mörkare orange */
+        background-color: #e16900; /* ännu mörkare orange */
         box-shadow: 0 6px 14px rgba(225, 105, 0, 0.6);
         outline: none;
     }
 
-.car-presentation-card {
-    background: white;
-    border-radius: 15px;
-}
-
+/* ==========================
+   Carousel Arrow Buttons
+   ========================== */
+/* Konsoliderade .prev-btn och .next-btn */
+.prev-btn,
+.next-btn,
 .car-image-container button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+    cursor: pointer;
+    user-select: none;
     transition: background-color 0.3s ease;
+    z-index: 20;
 }
 
+.prev-btn,
+.car-image-container .prev-btn {
+    left: 10px;
+}
+
+.next-btn,
+.car-image-container .next-btn {
+    right: 10px;
+}
+
+    .prev-btn:hover,
+    .next-btn:hover,
     .car-image-container button:hover {
         background-color: var(--color-fire-orange);
         color: white;
     }
 
-.car-description {
-    font-size: 1rem;
-    color: #444;
-    line-height: 1.5;
-}
-
-@media (max-width: 767px) {
-    .car-image-container img {
-        height: 200px !important;
-    }
-}
-
-/* Wrapper runt bilpresentationen */
+/* ==========================
+   Cards and Containers
+   ========================== */
+.card,
 .car-presentation-card {
-    background: white;
+    background-color: white;
     border-radius: 15px;
     box-shadow: 0 0 15px rgba(245, 124, 0, 0.25); /* mjuk orange skugga */
     padding: 1.5rem 2rem;
@@ -189,7 +164,9 @@ body {
     color: var(--color-soft-black);
 }
 
-/* Container för bild och knappar */
+/* ==========================
+   Car Image Container
+   ========================== */
 .car-image-container {
     position: relative;
     height: 350px;
@@ -198,51 +175,22 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-    /* Bilden */
     .car-image-container img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: 15px;
         transition: transform 0.4s ease;
+        will-change: transform; /* För bättre prestanda vid skalning */
     }
 
     .car-image-container:hover img {
         transform: scale(1.05);
     }
 
-    /* Pilarna */
-    .car-image-container button {
-        position: absolute;
-        top: 50%;
-        width: 45px;
-        height: 45px;
-        font-size: 28px;
-        border: none;
-        border-radius: 50%;
-        background: rgba(245, 124, 0, 0.85);
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        user-select: none;
-        transform: translateY(-50%);
-        z-index: 20;
-    }
-
-        .car-image-container button:hover {
-            background-color: var(--color-fire-orange);
-        }
-
-    /* Placering av pilknappar */
-    .car-image-container .prev-btn {
-        left: 10px;
-    }
-
-    .car-image-container .next-btn {
-        right: 10px;
-    }
-
-/* Texten bredvid bild */
+/* ==========================
+   Text Styles
+   ========================== */
 .car-description {
     font-size: 1.1rem;
     color: var(--color-dark-charcoal);
@@ -257,7 +205,6 @@ body {
     color: var(--color-fire-orange);
 }
 
-/* Pris per dag */
 .car-price-per-day {
     font-size: 1rem;
     font-weight: 500;
@@ -265,13 +212,14 @@ body {
     color: var(--color-metallic-gray);
 }
 
-/* Navbar bakgrund med gradient från dina css-variabler */
+/* ==========================
+   Navbar Styles
+   ========================== */
 .custom-navbar {
     background: linear-gradient(90deg, var(--color-fire-orange), var(--color-fire-red));
     box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3);
 }
 
-    /* Text och ikoner i menyn */
     .custom-navbar .nav-link {
         color: var(--color-light-gray);
         font-weight: 600;
@@ -279,13 +227,11 @@ body {
         transition: color 0.3s ease;
     }
 
-        /* Hover-effekt på länkar */
         .custom-navbar .nav-link:hover,
         .custom-navbar .nav-link:focus {
             color: var(--color-fire-orange);
         }
 
-        /* Understrykning vid hover */
         .custom-navbar .nav-link::after {
             content: "";
             position: absolute;
@@ -302,25 +248,21 @@ body {
             width: 100%;
         }
 
-        /* Aktiv sida */
         .custom-navbar .nav-link.active {
             color: var(--color-fire-orange);
             font-weight: 700;
             border-bottom: 2px solid var(--color-fire-orange);
         }
 
-    /* Navbar toggler-ikon färg (mobil) */
     .custom-navbar .navbar-toggler-icon {
         filter: invert(1);
     }
 
-    /* Logotyp: runda hörn och skugga */
     .custom-navbar .navbar-brand img {
         border-radius: 50%;
         box-shadow: 0 0 8px rgba(245, 124, 0, 0.7);
     }
 
-    /* Bootstrap ikoner färg */
     .custom-navbar .bi {
         color: var(--color-light-gray);
         transition: color 0.3s ease;
@@ -331,6 +273,24 @@ body {
         color: var(--color-fire-orange);
     }
 
+/* ==========================
+   Alerts
+   ========================== */
+.alert-danger {
+    background-color: #fbe9e7; /* ljus röd/orange ton */
+    color: var(--color-fire-orange);
+    border: 1px solid var(--color-fire-orange);
+}
+
+.alert-success {
+    background-color: #e6f4ea; /* ljus grön ton */
+    color: #2a7a35;
+    border: 1px solid #2a7a35;
+}
+
+/* ==========================
+   Badge Styles
+   ========================== */
 .badge-fixed {
     display: inline-block;
     min-width: 90px;
@@ -338,3 +298,141 @@ body {
     padding: 0.5em 0.75em;
     font-size: 0.9em;
 }
+
+/* ==========================
+   Responsive adjustments
+   ========================== */
+@media (max-width: 767px) {
+    .car-image-container img {
+        height: 200px !important;
+    }
+}
+
+
+.badge {
+    display: inline-block;
+    min-width: 90px;
+    text-align: center;
+    padding: 0.5em 0.75em;
+    font-size: 0.9em;
+    font-weight: 600;
+    border-radius: 12px;
+    color: white;
+}
+
+/* Kommande - t.ex. orange/gul */
+.badge-upcoming {
+    background-color: var(--color-fire-orange);
+}
+
+/* Aktiv - t.ex. grön */
+.badge-active {
+    background-color: #2a7a35; /* eller definiera en CSS-variabel om du vill */
+}
+
+/* Avslutad - t.ex. röd */
+.badge-finished {
+    background-color: var(--color-fire-red);
+}
+
+
+.page-title {
+    font-size: 2.75rem; /* riktigt stor och tydlig */
+    font-weight: 700;
+    color: var(--color-dark-charcoal);
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+.page-subtitle {
+    font-size: 1.25rem;
+    color: #555; /* lite mjukare än svart */
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+    font-weight: 400;
+    font-style: italic; /* för lite extra elegans, valfritt */
+}
+
+
+.homepage-container {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem;
+    background-color: #f8f9fa; /* ljus grå bakgrund */
+    color: #1C1C1C; /* mörk text */
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.logo-image {
+    width: 200px;
+    height: auto;
+    object-fit: contain; 
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+
+    .logo-image:hover {
+        transform: scale(1.05);
+    }
+
+.main-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+}
+
+.cta-button {
+    background-color: white;
+    color: #E65214;
+    font-weight: 600;
+    font-size: 1.25rem;
+    padding: 0.75rem 2.5rem;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.6);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+    .cta-button:hover,
+    .cta-button:focus {
+        background-color: #F9C544;
+        color: #1C1C1C;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        outline: none;
+    }
+
+
+.btn-fade {
+    background: linear-gradient(90deg, #F9C544, #E65214);
+    color: white;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+    .btn-fade:hover {
+        background: linear-gradient(90deg, #E65214, #F9C544);
+        color: white;
+    }

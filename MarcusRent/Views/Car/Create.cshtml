@@ -1,6 +1,6 @@
 ﻿@model MarcusRent.Models.CarViewModel
 
-<h2>Skapa ny bil</h2>
+<h1 class="page-title">SKAPA NY BIL</h1>
 
 <form asp-action="Create" method="post">
     <div class="form-group">
@@ -15,15 +15,6 @@
         <span asp-validation-for="Model" class="text-danger"></span>
     </div>
 
-
-   
-
-
-
-
-
-
-
     <div class="form-group">
         <label asp-for="Year"></label>
         <input asp-for="Year" class="form-control" type="number" min="1900" max="2100" />
@@ -36,14 +27,11 @@
         <span asp-validation-for="PricePerDay" class="text-danger"></span>
     </div>
 
-
-
     <div class="form-group">
         <label asp-for="CarDescription"></label>
         <textarea asp-for="CarDescription" class="form-control" rows="4"></textarea>
         <span asp-validation-for="CarDescription" class="text-danger"></span>
     </div>
-
 
     <div class="form-group">
         <label asp-for="ImageUrls">Bildlänkar</label>
@@ -52,14 +40,13 @@
         <input name="ImageUrls" class="form-control mb-1" placeholder="Bild-URL 3" />
         <small class="form-text text-muted">Fyll i en eller flera bildlänkar.</small>
     </div>
-
+    <br />
     <div class="form-group">
-        <label asp-for="Available"></label>
+        <label asp-for="Available">Bilen är tillgänglig för uthyrning </label>
         <input asp-for="Available" type="checkbox" />
         <span asp-validation-for="Available" class="text-danger"></span>
     </div>
-
-
+    <br />
 
     <button type="submit" class="btn custom-btn">Skapa bil</button>
 </form>

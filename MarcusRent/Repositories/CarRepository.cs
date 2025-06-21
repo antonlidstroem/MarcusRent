@@ -26,10 +26,6 @@ public class CarRepository : ICarRepository
             .FirstOrDefaultAsync(c => c.CarId == id);
 
     }
-
-    
-
-
     public async Task AddAsync(Car car)
     {
         _context.Cars.Add(car);
@@ -42,8 +38,6 @@ public class CarRepository : ICarRepository
         await _context.SaveChangesAsync();
     }
 
-
-
     public async Task DeleteAsync(int id)
     {
         var car = await _context.Cars.FindAsync(id);
@@ -53,16 +47,10 @@ public class CarRepository : ICarRepository
             await _context.SaveChangesAsync();
         }
     }
-
     public async Task<bool> ExistsAsync(int id)
     {
         return await _context.Cars.AnyAsync(c => c.CarId == id);
     }
-
-    //public IQueryable<Car> GetAllAvailable()
-    //{
-    //    return _context.Cars.AsQueryable();
-    //}
     public async Task<List<Car>> GetAllAvailableAsync()
     {
         return await _context.Cars
@@ -70,7 +58,6 @@ public class CarRepository : ICarRepository
             .Include(c => c.CarImages)
             .ToListAsync();
     }
-
 }
 
 
