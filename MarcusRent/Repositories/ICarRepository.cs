@@ -14,8 +14,10 @@ namespace MarcusRent.Repositories
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
 
-        public IQueryable<Car> GetAllAvailable();
-        
+        //public IQueryable<Car> GetAllAvailable();
+        Task<List<Car>> GetAllAvailableAsync();
+
+
     }
 }
 

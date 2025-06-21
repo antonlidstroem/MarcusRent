@@ -59,10 +59,18 @@ public class CarRepository : ICarRepository
         return await _context.Cars.AnyAsync(c => c.CarId == id);
     }
 
-    public IQueryable<Car> GetAllAvailable()
+    //public IQueryable<Car> GetAllAvailable()
+    //{
+    //    return _context.Cars.AsQueryable();
+    //}
+    public async Task<List<Car>> GetAllAvailableAsync()
     {
-        return _context.Cars.AsQueryable();
+        return await _context.Cars
+            .Where(c => c.Available)
+            .Include(c => c.CarImages)
+            .ToListAsync();
     }
+
 }
 
 

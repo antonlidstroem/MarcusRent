@@ -17,38 +17,21 @@ namespace MarcusRent.Controllers
 {
     public class CarController : Controller
     {
-        //private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly ICarRepository _carRepository;
 
-        //public CarController(ApplicationDbContext context, IMapper mapper, ICarRepository carRepository)
         public CarController(IMapper mapper, ICarRepository carRepository)
         {
-            //_context = context;
+
             _mapper = mapper;
             _carRepository = carRepository;
         }
-
-        // GET: Car
         public async Task<IActionResult> Index()
         {
-            // Hämta alla tillgängliga bilar inklusive deras bilder
-            var availableCars = await _carRepository.GetAllAvailable()
-                .Where(c => c.Available)
-                .Include(c => c.CarImages)  // Viktigt för att AutoMapper ska kunna mappa bilderna
-                .ToListAsync();
-
-            // Mappa från Car till CarViewModel inklusive ImageUrls
+            var availableCars = await _carRepository.GetAllAvailableAsync();
             var model = _mapper.Map<List<CarViewModel>>(availableCars);
-
             return View(model);
         }
-
-
-
-
-
-
 
 
         // GET: Car/Details/5
@@ -61,18 +44,11 @@ namespace MarcusRent.Controllers
 
             return View(car);
         }
-
-
-
-
-
         //GET: Car/Create
         public IActionResult Create()
         {
             return View();
         }
-
-
         // POST: Car/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -80,29 +56,15 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CarViewModel viewModel)
         {
-
-            DebugHelper.DebugModelStatePostCreate(ModelState);
-
             if (!ModelState.IsValid)
             {
                 return View(viewModel);
             }
             var car = _mapper.Map<Car>(viewModel);
 
-            if (viewModel.ImageUrls != null)
-            {
-                var validImageUrls = viewModel.ImageUrls
-                    .Where(url => !string.IsNullOrWhiteSpace(url))
-                    .ToList();
-
-                if (validImageUrls.Any())
-                {
-                    car.CarImages = validImageUrls.Select(url => new CarImage { Url = url }).ToList();
-                }
-            }
+            UpdateCarImages(car, viewModel.ImageUrls);
 
             await _carRepository.AddAsync(car);
-
             return RedirectToAction("Index", "Admin");
         }
 
@@ -119,77 +81,31 @@ namespace MarcusRent.Controllers
 
             var model = _mapper.Map<CarViewModel>(car);
 
-            // Mappa bilder separat om du inte redan gör det via AutoMapper
             model.ImageUrls = car.CarImages?.Select(ci => ci.Url).ToList() ?? new List<string>();
 
             return View(model);
         }
 
-
-
-
-
-
-
-
-        // POST: Car/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int? id, CarViewModel model)
-        //{
-        //    if (id != model.CarId)
-        //        return NotFound();
-
-        //    if (!ModelState.IsValid)
-        //        return View(model);
-
-        //    //var carEntity = await _context.Cars.FindAsync(id);
-        //    var carEntity = await _carRepository.GetByIdAsync(id.Value);
-        //    if (carEntity == null)
-        //        return NotFound();
-
-        //    _mapper.Map(model, carEntity);
-
-        //    try
-        //    {
-        //        await _carRepository.UpdateAsync(carEntity);
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!await _carRepository.ExistsAsync(id.Value))
-        //            return NotFound();
-        //        else
-        //            throw;
-        //    }
-
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(CarViewModel ViewModel)
+        public async Task<IActionResult> Edit(CarViewModel viewModel)
         {
             DebugHelper.DebugModelStatePostCreate(ModelState);
 
             if (!ModelState.IsValid)
-                return View(ViewModel);
+                return View(viewModel);
 
-            var carEntity = await _carRepository.GetByIdAsync(ViewModel.CarId);
+            var carEntity = await _carRepository.GetByIdAsync(viewModel.CarId);
             if (carEntity == null)
                 return NotFound();
 
-            _mapper.Map(ViewModel, carEntity);
+            _mapper.Map(viewModel, carEntity);
 
             carEntity.CarImages.Clear();
 
-            if (ViewModel.ImageUrls != null)
-            {
-                foreach (var url in ViewModel.ImageUrls.Where(u => !string.IsNullOrWhiteSpace(u)))
-                {
-                    carEntity.CarImages.Add(new CarImage { Url = url });
-                }
-            }
+            UpdateCarImages(carEntity, viewModel.ImageUrls);
+
+           
 
             try
             {
@@ -197,7 +113,7 @@ namespace MarcusRent.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _carRepository.ExistsAsync(ViewModel.CarId))
+                if (!await _carRepository.ExistsAsync(viewModel.CarId))
                     return NotFound();
                 else
                     throw;
@@ -207,87 +123,6 @@ namespace MarcusRent.Controllers
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // GET: Car/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    try
-        //    {
-        //        await _carRepository.DeleteAsync(id);
-        //        return Json(new { success = true });
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        // Anta att det handlar om en FK-konflikt med Orders
-        //        return Json(new { success = false, message = "Bilen kan inte tas bort eftersom den är registrerad i en eller flera ordrar." });
-        //    }
-        //}
-
-
-
-
-
-
-
-
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    try
-        //    {
-        //        await _carRepository.DeleteAsync(id);
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        return BadRequest("Bilen kunde inte tas bort. Den är kopplad till en eller flera ordrar.");
-        //    }
-
-        //    return Ok();
-        //}
-
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        
-        //{
-        //    var car = await _carRepository.GetByIdAsync(id);
-        //    if (car == null)
-        //    {
-        //        return Json(new { success = false, message = "Car not found" });
-        //    }
-
-        //   await _carRepository.DeleteAsync(id);
-
-        //    return Json(new { success = true });
-        //}
 
 
 
@@ -311,10 +146,19 @@ namespace MarcusRent.Controllers
                 TempData["ErrorMessage"] = "Bilen kan inte tas bort eftersom den är kopplad till ordrar.";
                 return RedirectToAction("Index", "Admin");
             }
-
         }
 
+        private void UpdateCarImages(Car car, List<string>? imageUrls)
+        {
+            car.CarImages.Clear();
 
+            if (imageUrls == null) return;
+
+            foreach (var url in imageUrls.Where(u => !string.IsNullOrWhiteSpace(u)))
+            {
+                car.CarImages.Add(new CarImage { Url = url });
+            }
+        }
 
     }
 }
