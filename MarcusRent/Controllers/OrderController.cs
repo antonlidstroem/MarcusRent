@@ -47,17 +47,10 @@ namespace MarcusRent.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             var isAdmin = userRoles.Contains("Admin");
 
-            IEnumerable<Order> orders;
+            var orders = isAdmin
+            ? await _orderRepository.GetAllOrdersAsync()
+            : await _orderRepository.GetOrdersByUserIdAsync(user.Id);
 
-            if (isAdmin)
-            {
-
-                orders = await _orderRepository.GetAllOrdersAsync();
-            }
-            else
-            {
-                orders = await _orderRepository.GetOrdersByUserIdAsync(user.Id);
-            }
 
             var model = _mapper.Map<List<OrderViewModel>>(orders);
             TempData["CarId"] = null;
@@ -83,36 +76,14 @@ namespace MarcusRent.Controllers
 
             var car = await _carRepository.GetByIdAsync(carId);
 
-            var viewModel = new OrderViewModel
-            {
-                CarId = car.CarId,
-                Price = car.PricePerDay,
-                Brand = car.Brand,
-                Model = car.Model,
-                CarDescription = car.CarDescription,
-                StartDate = DateTime.Today,
-                EndDate = DateTime.Today.AddDays(1)
-            };
+            var viewModel = _mapper.Map<OrderViewModel>(car);
+            viewModel.StartDate = DateTime.Today;
+            viewModel.EndDate = DateTime.Today.AddDays(1);
+
 
             TempData["CarId"] = carId;
             return View(viewModel);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         //POST: Order/Create
         [Authorize]
@@ -120,8 +91,6 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderViewModel viewModel)
         {
-
-
             if (!ModelState.IsValid)
             {
                 await PrepareCarViewDataAsync(viewModel.CarId);
@@ -131,56 +100,52 @@ namespace MarcusRent.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                ModelState.AddModelError("", "Du måste vara inloggad för att boka.");
+                TempData["TempData"] = "Du måste vara inloggad för att boka.";
                 await PrepareCarViewDataAsync(viewModel.CarId);
                 return View(viewModel);
             }
 
-            // Kontrollera att slutdatum är efter startdatum
-            int days = (viewModel.EndDate - viewModel.StartDate).Days;
-            if (days <= 0)
-            {
-                ModelState.AddModelError("", "Slutdatum måste vara efter startdatum.");
-                return View(viewModel);
-            }
+            // KONTROLLERA SLUTDATUM
+            var endDateValidationResult = ValidateEndDate(viewModel);
+            if (endDateValidationResult != null)
+                return endDateValidationResult;
 
-            var isBooked = await _orderRepository.IsCarBookedAsync(
-                viewModel.CarId,
-                viewModel.StartDate,
-                viewModel.EndDate
-            );
-
-            if (isBooked)
-            {
-                TempData["TempData"] = "Bilen är tyvärr upptagen under denna tidsperiod.";
-                await PrepareCarViewDataAsync(viewModel.CarId);
-                return View(viewModel);
-            }
-
-
-
+            // KONTROLLERA OM BILEN FINNS
             var car = await _carRepository.GetByIdAsync(viewModel.CarId);
-            if (car == null)
-            {
-                ModelState.AddModelError("", "Bilen kunde inte hittas.");
-                await PrepareCarViewDataAsync(viewModel.CarId);
-                return View(viewModel);
-            }
+            var carExistValidationResult = await DoesCarExistAsync(viewModel, car);
+            if (carExistValidationResult != null)
+                return carExistValidationResult;
 
+            // KONTROLLERA OM BILEN REDAN ÄR BOKAD
+            var availabilityValidationResult = await ValidateCarAvailabilityAsync(viewModel);
+            if (availabilityValidationResult != null)
+                return availabilityValidationResult;
+            
+            // BERÄKNA PRIS
+            var days = CountDaysDifference(viewModel);
             var order = _mapper.Map<Order>(viewModel);
             order.UserId = user.Id;
-            //order.ActiveOrder = true;
             order.Price = days * car.PricePerDay;
 
             await _orderRepository.AddOrderAsync(order);
 
             TempData["TempData"] = "Du har nu bokat bilen!";
-
-            return User.IsInRole("Admin")
-                ? RedirectToAction("Index", "Admin")
-                : RedirectToAction("Index", "Car");
+            return RedirectBasedOnRole(userController: "Car");
         }
 
+
+
+        private async Task<IActionResult?> DoesCarExistAsync(OrderViewModel viewModel, Car? car)
+        {
+            if (car == null)
+            {
+                TempData["TempData"] = "Bilen kunde inte hittas.";
+                await PrepareCarViewDataAsync(viewModel.CarId);
+                return RedirectToAction("Index", "Order");
+
+            }
+            return null;
+        }
 
         // GET: Order/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -198,20 +163,8 @@ namespace MarcusRent.Controllers
 
             var viewModel = _mapper.Map<OrderViewModel>(order);
 
-            var car = await _carRepository.GetByIdAsync(order.CarId);
-
-            if (car != null)
-            {
-                viewModel.Brand = car.Brand;
-                viewModel.Model = car.Model;
-                viewModel.Year = car.Year;
-                viewModel.CarDescription = car.CarDescription;
-            }
-
             return View(viewModel);
         }
-
-
 
         // POST: Order/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -219,9 +172,9 @@ namespace MarcusRent.Controllers
         //[Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,StartDate,EndDate,Price,CarId,ActiveOrder, CarDescription, Model, Brand")] OrderViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, OrderViewModel viewModel)
         {
-           
+
             if (id != viewModel.OrderId || !ModelState.IsValid)
             {
                 return View(viewModel);
@@ -242,7 +195,6 @@ namespace MarcusRent.Controllers
 
             var car = await _carRepository.GetByIdAsync(viewModel.CarId);
 
-
             if (car == null)
             {
                 ModelState.AddModelError("CarId", "Bilen kunde inte hittas.");
@@ -251,40 +203,24 @@ namespace MarcusRent.Controllers
 
             _mapper.Map(viewModel, order);
 
-            order.Car = car;
 
+            try
             {
-                try
-                {
-                    await _orderRepository.UpdateOrderAsync(order);
-                    TempData["TempData"] = "Ordern har uppdaterats";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await _orderRepository.OrderExistsAsync(viewModel.OrderId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                //if (await IfAdminAsync())
-                //{
-                //    return RedirectToAction("Index", "Admin");
-                //}
-                //else
-                //{
-                //    return RedirectToAction("Index", "Order");
-                //}
-
-                return User.IsInRole("Admin")
-                ? RedirectToAction("Index", "Admin")
-                : RedirectToAction("Index", "Order");
-
+                await _orderRepository.UpdateOrderAsync(order);
+                TempData["TempData"] = "Ordern har uppdaterats";
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _orderRepository.OrderExistsAsync(viewModel.OrderId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectBasedOnRole();
         }
 
         // POST: Order/Delete/5
@@ -299,31 +235,11 @@ namespace MarcusRent.Controllers
                 return NotFound();
             }
 
-           
-
             await _orderRepository.DeleteOrderAsync(id);
-
-            //if (await IfAdminAsync())
-            //{
-            //    return RedirectToAction("Index", "Admin");
-            //}
-            //else
-            //{
-            //    return RedirectToAction("Index", "Order");
-            //}
-            return User.IsInRole("Admin")
-                ? RedirectToAction("Index", "Admin")
-                : RedirectToAction("Index", "Order");
+            return RedirectBasedOnRole();
         }
 
-        //private async Task<bool> IfAdminAsync()
-        //{
-        //    var user = await _userManager.GetUserAsync(User);
-        //    var userRoles = await _userManager.GetRolesAsync(user);
-        //    var isAdmin = userRoles.Contains("Admin");
-        //    return isAdmin;
-        //}
-
+        //UPPDATERAR VIEWBAG 
         private async Task<bool> PrepareCarViewDataAsync(int carId)
         {
             var car = await _carRepository.GetByIdAsync(carId);
@@ -336,6 +252,44 @@ namespace MarcusRent.Controllers
             return true;
         }
 
+        private IActionResult RedirectBasedOnRole(string adminAction = "Index", string adminController = "Admin", string userAction = "Index", string userController = "Order")
+        {
+            return User.IsInRole("Admin")
+                ? RedirectToAction(adminAction, adminController)
+                : RedirectToAction(userAction, userController);
+        }
 
+        private IActionResult? ValidateEndDate(OrderViewModel viewModel)
+        {
+            if (CountDaysDifference(viewModel) <= 0)
+            {
+                TempData["TempData"] = "Slutdatum måste vara efter startdatum.";
+                return RedirectToAction("Index", "Order");
+            }
+            return null;
+        }
+        private int CountDaysDifference(OrderViewModel viewModel)
+        {
+            int days = (viewModel.EndDate - viewModel.StartDate).Days;
+            return days;
+        }
+
+
+        private async Task<IActionResult?> ValidateCarAvailabilityAsync(OrderViewModel viewModel)
+        {
+            var isBooked = await _orderRepository.IsCarBookedAsync(
+                viewModel.CarId,
+                viewModel.StartDate,
+                viewModel.EndDate
+            );
+
+            if (isBooked)
+            {
+                TempData["TempData"] = "Bilen är tyvärr upptagen under denna tidsperiod.";
+                await PrepareCarViewDataAsync(viewModel.CarId);
+                return RedirectToAction("Index", "Order");
+            }
+            return null;
+        }
     }
 }

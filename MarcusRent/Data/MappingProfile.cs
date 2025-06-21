@@ -60,6 +60,12 @@ namespace MarcusRent.Data
             .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin));
 
 
+            CreateMap<Car, OrderViewModel>()
+    .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.CarId))
+    .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PricePerDay))
+    .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand))
+    .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
+    .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.CarDescription));
 
 
 
