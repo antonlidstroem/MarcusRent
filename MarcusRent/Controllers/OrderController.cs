@@ -103,6 +103,13 @@ namespace MarcusRent.Controllers
                 return View(viewModel);
             }
 
+            if (!user.ApprovedByAdmin)
+            {
+                TempData["TempData"] = "Din användare är inte godkänd av administratören för att boka bilar.";
+                await PrepareCarViewDataAsync(viewModel.CarId);
+                return View(viewModel);
+            }
+
             // KONTROLLERA SLUTDATUM
             var endDateValidationResult = await ValidateEndDateAsync(viewModel);
             if (endDateValidationResult != null)

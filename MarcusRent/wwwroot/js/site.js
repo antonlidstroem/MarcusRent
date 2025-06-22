@@ -34,6 +34,22 @@
         startDateInput.addEventListener('change', calculatePrice);
         endDateInput.addEventListener('change', calculatePrice);
 
-        calculatePrice(); // kör direkt för att visa pris om datum är förifyllda
+        calculatePrice(); 
     });
+
+
+
+   //STÄNGER INFORMATIONSRUTAN MED INLOGGNINGSUPPGIFTER EFTER 3 SEKUNDER
+   
+        setTimeout(function () {
+        var alert = document.getElementById('demo-alert');
+        if (alert) {
+            // Bootstrap 5 dismiss
+            var bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+        bsAlert.close();
+        }
+    }, 3000);
+
+
+
 });

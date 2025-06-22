@@ -1,5 +1,4 @@
-﻿//using MarcusRent.Data; 
-using MarcusRent.Classes;
+﻿using MarcusRent.Classes;
 using Microsoft.EntityFrameworkCore;
 using MarcusRent.Repositories;
 

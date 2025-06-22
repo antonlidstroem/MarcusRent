@@ -54,11 +54,9 @@
 
         <div class="form-group form-check">
             <input asp-for="Available" class="form-check-input" />
-            <label asp-for="Available" class="form-check-label">Tillgänglig</label>
+            <label asp-for="Available" class="form-check-label">Bilen är tillgänglig för uthyrning</label>
         </div>
 
-
-        <!-- Lägg till tomma rader för att lägga till nya länkar -->
         @for (int i = Model.ImageUrls?.Count ?? 0; i < (Model.ImageUrls?.Count ?? 0) + 3; i++)
         {
             <div class="mb-2">

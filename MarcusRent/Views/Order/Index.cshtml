@@ -17,7 +17,6 @@
 	var oldOrders = Model
 		.Where(o => o.EndDate < today)
 		.OrderByDescending(o => o.EndDate);
-
 }
 
 @if (TempData["TempData"] != null)
@@ -39,8 +38,6 @@
 	<p class="page-subtitle"><strong>Välkommen!</strong></p>
 	<p class="page-subtitle"> Här ser du alla dina ordrar.</p>
 }
-
-
 
 <div class="card mb-5 shadow">
 
@@ -99,7 +96,6 @@
 		</table>
 	}
 
-
 @* GENERERAR AKTIVA ORDRAR *@
 <br />
 	<h2>Aktiva ordrar</h2>
@@ -109,8 +105,6 @@
 	}
 	else
 	{
-
-
 		<table class="table">
 			<thead>
 				<tr>
@@ -218,6 +212,5 @@
 				}
 			</tbody>
 		</table>
-
 	}
 </div>
