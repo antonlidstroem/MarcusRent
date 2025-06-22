@@ -3,7 +3,7 @@
 using MarcusRent.Classes;
 
 
-namespace MarcusRental2.Repositories
+namespace MarcusRent.Repositories
 {
     public interface IOrderRepository
     {

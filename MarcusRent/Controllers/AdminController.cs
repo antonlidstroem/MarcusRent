@@ -10,7 +10,7 @@ using MarcusRent.Data; // Din IApplicationUserService
 using MarcusRent.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MarcusRental2.Repositories;
+
 
 namespace MarcusRent.Controllers
 {

@@ -1,6 +1,5 @@
 ﻿using MarcusRent.Classes;
 using MarcusRent.Repositories;
-using MarcusRental2.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;

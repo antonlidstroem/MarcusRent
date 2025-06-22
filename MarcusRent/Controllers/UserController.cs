@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using MarcusRent.Classes;
-using MarcusRental2.Repositories;
+using MarcusRent.Repositories;
+
 
 
 namespace MarcusRent.Controllers

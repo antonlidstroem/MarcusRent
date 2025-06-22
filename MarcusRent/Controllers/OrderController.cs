@@ -10,7 +10,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using MarcusRent.Repositories;
-using MarcusRental2.Repositories;
+
 
 
 namespace MarcusRent.Controllers
