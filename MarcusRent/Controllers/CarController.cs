@@ -1,124 +1,145 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using MarcusRent.Classes;
 using MarcusRent.Models;
-using AutoMapper;
 using MarcusRent.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace MarcusRent.Controllers
 {
     public class CarController : Controller
     {
-        private readonly IMapper _mapper;
-        private readonly ICarRepository _carRepository;
-
-        public CarController(IMapper mapper, ICarRepository carRepository)
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
+            PropertyNameCaseInsensitive = true
+        };
 
-            _mapper = mapper;
-            _carRepository = carRepository;
+       
+        public CarController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        {
+            _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private HttpClient GetClientWithToken()
+        {
+            var token = _httpContextAccessor.HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+                return null!; // Hantera i anrop
+
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return client;
         }
         public async Task<IActionResult> Index()
         {
-            var availableCars = await _carRepository.GetAllAvailableAsync();
-            var model = _mapper.Map<List<CarViewModel>>(availableCars);
-            return View(model);
+            var client = GetClientWithToken();
+            if (client == null)
+                return RedirectToAction("Login", "Account");
+
+            var response = await client.GetAsync("https://localhost:5001/api/cars");
+            if (!response.IsSuccessStatusCode)
+                return Unauthorized();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var cars = JsonSerializer.Deserialize<List<CarViewModel>>(json, _jsonOptions);
+            return View(cars);
         }
 
-
-        // GET: Car/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
-            var car = await _carRepository.GetByIdAsync(id.Value);
-            if (car == null) return NotFound();
+            var client = GetClientWithToken();
+            if (client == null)
+                return RedirectToAction("Login", "Account");
 
+            var response = await client.GetAsync($"https://localhost:5001/api/cars/{id}");
+            if (!response.IsSuccessStatusCode)
+                return NotFound();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var car = JsonSerializer.Deserialize<CarViewModel>(json, _jsonOptions);
             return View(car);
         }
-        //GET: Car/Create
+
         public IActionResult Create()
         {
             return View();
         }
-        // POST: Car/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CarViewModel viewModel)
         {
             if (!ModelState.IsValid)
-            {
                 return View(viewModel);
-            }
-            var car = _mapper.Map<Car>(viewModel);
 
-            UpdateCarImages(car, viewModel.ImageUrls);
+            var client = GetClientWithToken();
+            if (client == null)
+                return RedirectToAction("Login", "Account");
 
-            await _carRepository.AddAsync(car);
-            return RedirectToAction("Index", "Admin");
+            var jsonContent = new StringContent(JsonSerializer.Serialize(viewModel), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("https://localhost:5001/api/cars", jsonContent);
+
+            if (response.IsSuccessStatusCode)
+                return RedirectToAction(nameof(Index));
+
+            ModelState.AddModelError("", "Något gick fel vid skapandet av bilen.");
+            return View(viewModel);
         }
 
-        // GET: Car/Edit/5
-        //[HttpGet]
+
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id == null) return NotFound();
+
+            var client = GetClientWithToken();
+            if (client == null)
+                return RedirectToAction("Login", "Account");
+
+            var response = await client.GetAsync($"https://localhost:5001/api/cars/{id}");
+            if (!response.IsSuccessStatusCode)
                 return NotFound();
 
-            var car = await _carRepository.GetByIdAsync(id.Value);
-            if (car == null)
-                return NotFound();
-
-            var model = _mapper.Map<CarViewModel>(car);
-
-            model.ImageUrls = car.CarImages?.Select(ci => ci.Url).ToList() ?? new List<string>();
-
-            return View(model);
+            var json = await response.Content.ReadAsStringAsync();
+            var car = JsonSerializer.Deserialize<CarViewModel>(json, _jsonOptions);
+            return View(car);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(CarViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, CarViewModel viewModel)
         {
-            DebugHelper.DebugModelStatePostCreate(ModelState);
+            if (id != viewModel.CarId)
+                return BadRequest();
 
             if (!ModelState.IsValid)
                 return View(viewModel);
 
-            var carEntity = await _carRepository.GetByIdAsync(viewModel.CarId);
-            if (carEntity == null)
-                return NotFound();
+            var client = GetClientWithToken();
+            if (client == null)
+                return RedirectToAction("Login", "Account");
 
-            _mapper.Map(viewModel, carEntity);
+            var jsonContent = new StringContent(JsonSerializer.Serialize(viewModel), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"https://localhost:5001/api/cars/{id}", jsonContent);
 
-            carEntity.CarImages.Clear();
+            if (response.IsSuccessStatusCode)
+                return RedirectToAction(nameof(Index));
 
-            UpdateCarImages(carEntity, viewModel.ImageUrls);
-
-           
-
-            try
-            {
-                await _carRepository.UpdateAsync(carEntity);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _carRepository.ExistsAsync(viewModel.CarId))
-                    return NotFound();
-                else
-                    throw;
-            }
-
-            return RedirectToAction("Index", "Admin");
+            ModelState.AddModelError("", "Något gick fel vid uppdateringen av bilen.");
+            return View(viewModel);
         }
-
 
 
 
@@ -127,22 +148,17 @@ namespace MarcusRent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var car = await _carRepository.GetByIdAsync(id);
-            if (car == null)
-                return NotFound();
+            var client = GetClientWithToken();
+            if (client == null)
+                return RedirectToAction("Login", "Account");
 
-            try
-            {
-                await _carRepository.DeleteAsync(id);
-                //return RedirectToAction(nameof(Index));
-                return RedirectToAction("Index", "Admin");
+            var response = await client.DeleteAsync($"https://localhost:5001/api/cars/{id}");
 
-            }
-            catch (DbUpdateException)
-            {
-                TempData["ErrorMessage"] = "Bilen kan inte tas bort eftersom den är kopplad till ordrar.";
-                return RedirectToAction("Index", "Admin");
-            }
+            if (response.IsSuccessStatusCode)
+                return RedirectToAction(nameof(Index));
+
+            TempData["ErrorMessage"] = "Bilen kunde inte tas bort.";
+            return RedirectToAction(nameof(Index));
         }
 
         private void UpdateCarImages(Car car, List<string>? imageUrls)
