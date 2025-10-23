@@ -1,0 +1,6 @@
+@MarcusRentAPI_HostAddress = http://localhost:5010
+
+GET {{MarcusRentAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

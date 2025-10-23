@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcusRent", "MarcusRent\MarcusRent.csproj", "{B6EB9A3E-B6D9-4002-A8CA-BA5285857994}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcusRentAPI", "MarcusRentAPI\MarcusRentAPI.csproj", "{CCDDD797-8171-481C-8596-CF2697430F8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{B6EB9A3E-B6D9-4002-A8CA-BA5285857994}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6EB9A3E-B6D9-4002-A8CA-BA5285857994}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6EB9A3E-B6D9-4002-A8CA-BA5285857994}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCDDD797-8171-481C-8596-CF2697430F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCDDD797-8171-481C-8596-CF2697430F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCDDD797-8171-481C-8596-CF2697430F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCDDD797-8171-481C-8596-CF2697430F8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B833ECE2-0C16-4822-A90B-2A4A596B63CD}
 	EndGlobalSection
 EndGlobal
