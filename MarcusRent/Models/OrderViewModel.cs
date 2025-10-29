@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MarcusRent.Classes;
+using DAL.Classes;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;

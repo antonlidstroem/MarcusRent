@@ -4,7 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
-using MarcusRent.Classes;
+using DAL.Classes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
