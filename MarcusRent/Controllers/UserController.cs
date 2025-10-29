@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using MarcusRent.Classes;
-using MarcusRent.Repositories;
+using DAL.Classes;
+using DAL.Repositories;
 
 
 

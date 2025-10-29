@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using MarcusRent.Classes;
+using DAL.Classes;
 using MarcusRent.Models;
-using MarcusRent.Data; // Din IApplicationUserService
-using MarcusRent.Repositories;
+using DAL.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

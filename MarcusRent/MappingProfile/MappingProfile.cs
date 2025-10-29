@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using MarcusRent.Classes;
+using DAL.Classes;
 using MarcusRent.Models;
 using System.Linq;
 
-namespace MarcusRent.Data
+namespace DAL.Data
 {
     public class MappingProfile : Profile
     {

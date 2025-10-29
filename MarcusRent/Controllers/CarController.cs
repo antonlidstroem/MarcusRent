@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MarcusRent.Classes;
+using DAL.Classes;
 using MarcusRent.Models;
 using AutoMapper;
-using MarcusRent.Repositories;
+using DAL.Repositories;
 
 
 namespace MarcusRent.Controllers

@@ -1,8 +1,9 @@
-using MarcusRent.Classes;
-using MarcusRent.Data;
-using MarcusRent.Repositories;
+using DAL.Classes;
+using DAL.Repositories;
+using DAL.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace MarcusRent
 {
@@ -12,6 +13,7 @@ namespace MarcusRent
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //Databaskoppling
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             
@@ -26,7 +28,11 @@ namespace MarcusRent
              .AddRoles<IdentityRole>()
              .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            //builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddAutoMapper(cfg =>
+            { }, typeof(MappingProfile));
+
+
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
